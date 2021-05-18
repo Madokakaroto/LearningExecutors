@@ -30,7 +30,7 @@ namespace std
 {
     template <typename F, typename ... Args>
     concept nothrow_invocable =
-        requires (F&& f, Args&& ... args)
+        requires(F&& f, Args&& ... args)
         {
             { std::invoke(std::forward<F>(f), std::forward<Args>(args)...) } noexcept;
         };

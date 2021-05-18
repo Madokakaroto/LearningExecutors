@@ -1,7 +1,59 @@
 #pragma once
 
+// traits
+namespace std::execution
+{
+    template<template
+    <
+        template <typename...> class Tuple,
+        template <typename ...> class Variant
+    > class>
+    struct has_value_types;
+
+    template <template <template <typename...> class> class>
+    struct has_error_types;
+
+    template<typename S>
+    concept has_sender_types = requires
+    {
+        typename has_value_types<S::template value_types>;
+        typename has_error_types<S::template error_types>;
+        typename bool_constant<S::sends_done>;
+    };
+
+    template <typename S>
+    struct sender_traits
+    {
+        using _unspecialized = void;
+    };
+
+    template <has_sender_types S>
+    struct sender_traits<S>
+    {
+        template
+        <
+            template <typename...> class Tuple,
+            template <typename...> class Variant
+        >
+        using value_types = typename S::template value_types<Tuple, Variant>;
+
+        template <template <typename...> class Variant>
+        using error_types = typename S::template error_types<Variant>;
+
+        static constexpr bool sends_done = S::sends_done;
+    };
+
+    struct sender_base {};
+
+    template <typename S>
+    concept is_sender_base = is_base_of_v<sender_base, S>;
+
+    template <is_sender_base S> requires (!has_sender_types<S>)
+    struct sender_traits<S> {};
+}
+
 // algorithm
-namespace std
+namespace std::execution
 {
     template <typename R, typename ... Args>
     inline auto set_value(R&& r, Args&& ... args)
@@ -26,9 +78,9 @@ namespace std
     }
 }
 
-namespace std
+namespace std::execution
 {
-    template <typename R, typename E = bad_exception>
+    template <typename R, typename E = exception_ptr>
     concept receiver =
         move_constructible<remove_cvref_t<R>> &&
         constructible_from<remove_cvref_t<R>, R> &&
@@ -56,4 +108,11 @@ namespace std
 
     template <typename R, typename ... Args>
     inline constexpr bool is_nothrow_receiver_of_v = nothrow_receiver_of<R, Args...>;
+
+    template <typename S>
+    concept sender = move_constructible<remove_cvref_t<S>> &&
+        !requires
+    {
+        typename remove_cv_t<S>;
+    };
 }
