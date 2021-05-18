@@ -15,6 +15,6 @@ struct test_sender_traits : std::execution::sender_base
 
 int main(void)
 {
-    std::execution::sender_traits<test_sender_traits>::sends_done;
+    static_assert(std::execution::sender_traits<test_sender_traits>::sends_done);
     return 0;
 }

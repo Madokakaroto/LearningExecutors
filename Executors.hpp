@@ -24,7 +24,7 @@ namespace std::execution
     template <typename S>
     struct sender_traits
     {
-        using _unspecialized = void;
+        using __unspecialized = void;
     };
 
     template <has_sender_types S>
@@ -110,9 +110,32 @@ namespace std::execution
     inline constexpr bool is_nothrow_receiver_of_v = nothrow_receiver_of<R, Args...>;
 
     template <typename S>
-    concept sender = move_constructible<remove_cvref_t<S>> &&
+    concept sender =
+        move_constructible<remove_cvref_t<S>> &&
         !requires
-    {
-        typename remove_cv_t<S>;
-    };
+        {
+            typename sender_traits<remove_cvref_t<S>>::__unspecialized;
+        };
+
+    template <typename S, typename R>
+    concept sender_to =
+        sender<S> &&
+        receiver<R> &&
+        requires(S&& s, R&& r)
+        {
+            connect(std::move(s), std::move(r));
+        };
+
+    template <typename E, typename F>
+    concept executor_of_impl =
+        invocable<add_lvalue_reference_t<remove_cvref_t<F>>> &&
+        constructible_from<remove_cvref_t<F>, F> &&
+        move_constructible<remove_cvref_t<F>> &&
+        copy_constructible<E> &&
+        is_nothrow_copy_constructible_v<E> &&
+        equality_comparable<E> &&
+        requires(E const& e, F&& f)
+        {
+            execute(e, std::forward<F>(f));
+        };
 }
