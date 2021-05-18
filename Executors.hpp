@@ -27,54 +27,55 @@ namespace std::execution
         using __unspecialized = void;
     };
 
-    template <has_sender_types S>
-    struct sender_traits<S>
-    {
-        template
-        <
-            template <typename...> class Tuple,
-            template <typename...> class Variant
-        >
-        using value_types = typename S::template value_types<Tuple, Variant>;
-
-        template <template <typename...> class Variant>
-        using error_types = typename S::template error_types<Variant>;
-
-        static constexpr bool sends_done = S::sends_done;
-    };
-
     struct sender_base {};
 
     template <typename S>
     concept is_sender_base = is_base_of_v<sender_base, S>;
-
-    template <is_sender_base S> requires (!has_sender_types<S>)
-    struct sender_traits<S> {};
 }
 
 // algorithm
 namespace std::execution
 {
-    template <typename R, typename ... Args>
-    inline auto set_value(R&& r, Args&& ... args)
-        noexcept(noexcept(move(r).set_value(forward<Args>(args)...))) ->
-        decltype(move(r).set_value(forward<Args>(args)...))
+    inline namespace impl
     {
-        return move(r).set_value(forward<Args>(args)...);
-    }
+        struct invocable_archetype
+        {
+            void operator()() const noexcept;
+        };
 
-    template <typename R, typename E> requires
-        requires(R&& r, E&& e) { { move(r).set_error(e) } noexcept; }
-    inline decltype(auto) set_error(R&& r, E&& e) noexcept
-    {
-        return move(r).set_error(forward<E>(e));
-    }
+        struct set_value_t
+        {
+            template <typename R, typename ... Args>
+            decltype(auto) operator() (R&& r, Args&& ... args) const
+                noexcept(noexcept(move(r).set_value(forward<Args>(args)...)))
+            {
+                return move(r).set_value(forward<Args>(args)...);
+            }
+        };
 
-    template <typename R> requires
-        requires(R&& r) { { move(r).set_done() } noexcept; }
-    inline decltype(auto) set_done(R&& r) noexcept
-    {
-        return move(r).set_done();
+        struct set_error_t
+        {
+            template <typename R, typename E> requires
+                requires(R&& r, E&& e) { { move(r).set_error(e) } noexcept; }
+            decltype(auto) operator() (R&& r, E&& e) const noexcept
+            {
+                return move(r).set_error(forward<E>(e));
+            }
+        };
+
+        struct set_done_t
+        {
+            template <typename R> requires
+                requires(R&& r) { { move(r).set_done() } noexcept; }
+            decltype(auto) operator() (R&& r) const noexcept
+            {
+                return move(r).set_done();
+            }
+        };
+
+        inline constexpr set_value_t set_value{};
+        inline constexpr set_error_t set_error{};
+        inline constexpr set_done_t set_done{};
     }
 }
 
@@ -86,8 +87,8 @@ namespace std::execution
         constructible_from<remove_cvref_t<R>, R> &&
         requires(remove_cvref_t<R>&& r, E&& e)
         {
-            { set_done(move(r)) } noexcept;
-            { set_error(move(r), forward<E>(e)) } noexcept;
+            { execution::set_done(move(r)) } noexcept;
+            { execution::set_error(move(r), forward<E>(e)) } noexcept;
         };
 
     template <typename R, typename ... Args>
@@ -95,16 +96,13 @@ namespace std::execution
         receiver<R> &&
         requires(remove_cvref_t<R>&& r, Args&& ... args)
         {
-            set_value(move(r), forward<Args>(args)...);
+            execution::set_value(move(r), forward<Args>(args)...);
         };
 
     template <typename R, typename ... Args>
     concept nothrow_receiver_of =
         receiver_of<R, Args...> &&
-        requires(remove_cvref_t<R>&& r, Args&& ... args)
-        {
-            { set_value(move(r), forward<Args>(args)...) } noexcept;
-        };
+        is_nothrow_invocable_v<decltype(set_value), Args...>;
 
     template <typename R, typename ... Args>
     inline constexpr bool is_nothrow_receiver_of_v = nothrow_receiver_of<R, Args...>;
@@ -123,7 +121,7 @@ namespace std::execution
         receiver<R> &&
         requires(S&& s, R&& r)
         {
-            connect(std::move(s), std::move(r));
+            connect(move(s), move(r));
         };
 
     template <typename E, typename F>
@@ -136,6 +134,55 @@ namespace std::execution
         equality_comparable<E> &&
         requires(E const& e, F&& f)
         {
-            execute(e, std::forward<F>(f));
+            execute(e, forward<F>(f));
         };
+
+    template <typename E>
+    concept executor = executor_of_impl<E, invocable_archetype>;
+
+    template <typename O>
+    concept operation_state =
+        destructible<O> &&
+        is_object_v<O> &&
+        requires(O& o)
+        {
+            { start(o) } noexcept;
+        };
+}
+
+// forward impl
+namespace std::execution
+{
+    template <has_sender_types S>
+    struct sender_traits<S>
+    {
+        template
+        <
+            template <typename...> class Tuple,
+            template <typename...> class Variant
+        >
+        using value_types = typename S::template value_types<Tuple, Variant>;
+
+        template <template <typename...> class Variant>
+        using error_types = typename S::template error_types<Variant>;
+
+        static constexpr bool sends_done = S::sends_done;
+    };
+
+    template <typename T> requires (has_sender_types<T> && executor_of_impl<T, invocable_archetype>)
+    struct sender_traits<T>
+    {
+        template
+        <
+            template <typename...> class Tuple,
+            template <typename...> class Variant
+        >
+        using value_types = Variant<Tuple<>>;
+
+        template <template <typename...> class Variant>
+        using error_types = Variant<exception_ptr>;
+    };
+
+    template <is_sender_base S> requires (!has_sender_types<S>)
+    struct sender_traits<S> {};
 }
