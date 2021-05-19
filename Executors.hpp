@@ -40,7 +40,7 @@ namespace std::execution
     {
         struct invocable_archetype
         {
-            void operator()() const noexcept;
+            void operator()() & noexcept;
         };
 
         struct set_value_t
@@ -77,6 +77,42 @@ namespace std::execution
         inline constexpr set_error_t set_error{};
         inline constexpr set_done_t set_done{};
     }
+}
+
+// internal
+namespace std::execution
+{
+    template <typename R, class>
+    struct as_invocable
+    {
+        explicit as_invocable(R& r) noexcept
+        : r_(addressof(r)) {}
+
+        as_invocable(as_invocable&& other) noexcept
+        : r_(exchange(other.r_, nullptr)) {}
+
+        ~as_invocable()
+        {
+            if(r_)
+            {
+                execution::set_done(move(*r_));
+            }
+        }
+
+        void operator()() & noexcept
+        {
+            try
+            {
+                execution::set_value(move(*r_));
+            }
+            catch (...)
+            {
+                execution::set_error(move(*r_), current_exception());
+            }
+        }
+
+        R* r_;
+    };
 }
 
 namespace std::execution
