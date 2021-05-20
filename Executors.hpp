@@ -43,15 +43,43 @@ namespace std::execution
             void operator()() & noexcept;
         };
 
-        struct set_value_t
+        namespace set_value_n
         {
             template <typename R, typename ... Args>
-            decltype(auto) operator() (R&& r, Args&& ... args) const
-                noexcept(noexcept(move(r).set_value(forward<Args>(args)...)))
+            concept default_impl =
+                requires(remove_cvref_t<R>&& r, Args ... args)
+                {
+                    move(r).set_value(forward<Args>(args)...);
+                };
+
+            template <typename R, typename ... Args>
+            concept customise_point =
+                requires(remove_cvref_t<R>&& r, Args... args)
+                {
+                    set_value(move(r), forward<Args>(args)...);
+                };
+
+            template <typename R, typename ... Args>
+            concept default_exclude_customise =
+                default_impl<R, Args...> && !customise_point<R, Args...>;
+
+            struct func_type
             {
-                return move(r).set_value(forward<Args>(args)...);
-            }
-        };
+                template <typename R, typename ... Args> requires (default_exclude_customise<R, Args...>)
+                decltype(auto) operator() (R&& r, Args&& ... args) const
+                    noexcept(noexcept(move(r).set_value(forward<Args>(args)...)))
+                {
+                    return move(r).set_value(forward<Args>(args)...);
+                }
+
+                template <typename R, typename ... Args> requires (customise_point<R, Args...>)
+                decltype(auto) operator() (R&& r, Args&& ... args) const
+                    noexcept(noexcept(set_value(move(r), forward<Args>(args)...)))
+                {
+                    return set_value(move(r), forward<Args>(args)...);
+                }
+            };
+        }
 
         struct set_error_t
         {
@@ -73,7 +101,7 @@ namespace std::execution
             }
         };
 
-        inline constexpr set_value_t set_value{};
+        inline constexpr set_value_n::func_type set_value{};
         inline constexpr set_error_t set_error{};
         inline constexpr set_done_t set_done{};
     }
