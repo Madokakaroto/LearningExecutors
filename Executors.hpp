@@ -47,16 +47,16 @@ namespace std::execution
         {
             template <typename R, typename ... Args>
             concept default_impl =
-                requires(remove_cvref_t<R>&& r, Args ... args)
+                requires(R&& r, Args&&... args)
                 {
-                    move(r).set_value(forward<Args>(args)...);
+                    forward<R>(r).set_value(forward<Args>(args)...);
                 };
 
             template <typename R, typename ... Args>
             concept customise_point =
-                requires(remove_cvref_t<R>&& r, Args... args)
+                requires(R&& r, Args&&... args)
                 {
-                    set_value(move(r), forward<Args>(args)...);
+                    set_value(forward<R>(r), forward<Args>(args)...);
                 };
 
             template <typename R, typename ... Args>
@@ -67,43 +67,105 @@ namespace std::execution
             {
                 template <typename R, typename ... Args> requires (default_exclude_customise<R, Args...>)
                 decltype(auto) operator() (R&& r, Args&& ... args) const
-                    noexcept(noexcept(move(r).set_value(forward<Args>(args)...)))
+                    noexcept(noexcept(forward<R>(r).set_value(forward<Args>(args)...)))
                 {
-                    return move(r).set_value(forward<Args>(args)...);
+                    return forward<R>(r).set_value(forward<Args>(args)...);
                 }
 
                 template <typename R, typename ... Args> requires (customise_point<R, Args...>)
                 decltype(auto) operator() (R&& r, Args&& ... args) const
-                    noexcept(noexcept(set_value(move(r), forward<Args>(args)...)))
+                    noexcept(noexcept(set_value(forward<R>(r), forward<Args>(args)...)))
                 {
-                    return set_value(move(r), forward<Args>(args)...);
+                    return set_value(forward<R>(r), forward<Args>(args)...);
                 }
             };
         }
 
-        struct set_error_t
+        namespace set_error_n
         {
-            template <typename R, typename E> requires
-                requires(R&& r, E&& e) { { move(r).set_error(e) } noexcept; }
-            decltype(auto) operator() (R&& r, E&& e) const noexcept
+            template <typename R, typename E = exception_ptr>
+            concept default_impl =
+                requires(R&& r, E&& e)
+                {
+                    { forward<R>(r).set_error(forward<E>(e)) } noexcept;
+                };
+
+            template <typename R, typename E = exception_ptr>
+            concept customise_point =
+                requires(R&& r, E&& e)
+                {
+                    { set_error(forward<R>(r), forward<E>(e)) } noexcept;
+                };
+
+            template <typename R, typename E = exception_ptr>
+            concept default_exclude_customise =
+                default_impl<R, E> && !customise_point<R, E>;
+
+            struct func_type
             {
-                return move(r).set_error(forward<E>(e));
-            }
-        };
+                template <typename R, typename E> requires(default_exclude_customise<R, E>)
+                decltype(auto) operator() (R&& r, E&& e) const noexcept
+                {
+                    return forward<R>(r).set_error(forward<E>(e));
+                }
+
+                template <typename R, typename E> requires(customise_point<R, E>)
+                decltype(auto) operator() (R&& r, E&& e) const noexcept
+                {
+                    return set_error(forward<R>(r), forward<E>(e));
+                }
+            };
+        }
 
         struct set_done_t
         {
             template <typename R> requires
-                requires(R&& r) { { move(r).set_done() } noexcept; }
+                requires(R&& r) { { forward<R>(r).set_done() } noexcept; }
             decltype(auto) operator() (R&& r) const noexcept
             {
                 return move(r).set_done();
             }
         };
 
+        namespace set_done_n
+        {
+            template <typename R>
+            concept default_impl =
+                requires(R&& r)
+                {
+                    { forward<R>(r).set_done() } noexcept;
+                };
+
+            template <typename R>
+            concept customise_point =
+                requires(R&& r)
+                {
+                    { set_done(forward<R>(r)) } noexcept;
+                };
+
+            template <typename R>
+            concept default_exclude_customise =
+                default_impl<R> && !customise_point<R>;
+
+            struct func_type
+            {
+                template <typename R> requires(default_exclude_customise<R>)
+                decltype(auto) operator() (R&& r) const noexcept
+                {
+                    return forward<R>().set_done();
+                }
+
+                template <typename R> requires(customise_point<R>)
+                decltype(auto) operator() (R&& r) const noexcept
+                {
+                    return set_done(forward<R>(r));
+                }
+            };
+        }
+
         inline constexpr set_value_n::func_type set_value{};
-        inline constexpr set_error_t set_error{};
-        inline constexpr set_done_t set_done{};
+        inline constexpr set_error_n::func_type set_error{};
+        inline constexpr set_done_n::func_type set_done{};
     }
 }
 
