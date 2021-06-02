@@ -117,16 +117,6 @@ namespace std::execution
             };
         }
 
-        struct set_done_t
-        {
-            template <typename R> requires
-                requires(R&& r) { { forward<R>(r).set_done() } noexcept; }
-            decltype(auto) operator() (R&& r) const noexcept
-            {
-                return move(r).set_done();
-            }
-        };
-
         namespace set_done_n
         {
             template <typename R>
@@ -202,6 +192,25 @@ namespace std::execution
         }
 
         R* r_;
+    };
+
+    template <typename F, typename>
+    struct as_receiver
+    {
+        void set_value() noexcept(is_nothrow_invocable_v<F&>)
+        {
+            invoke(f_);
+        }
+
+        template <typename E>
+        void set_error(E&&) noexcept
+        {
+            terminate();
+        }
+
+        void set_done() noexcept {}
+
+        F f_;
     };
 }
 
