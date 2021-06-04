@@ -50,7 +50,7 @@ namespace std
         template <typename T, typename U>
         concept weak_equality_compareable = requires(
             add_lvalue_reference_t<add_const_t<remove_cvref_t<T>>> t,
-        add_lvalue_reference_t<add_const_t<remove_cvref_t<U>>> u)
+            add_lvalue_reference_t<add_const_t<remove_cvref_t<U>>> u)
         {
             { t == u } -> boolean_testable;
             { t != u } -> boolean_testable;
@@ -76,8 +76,8 @@ namespace std
 {
     template <typename F, typename ... Args>
     concept nothrow_invocable =
-        requires(F&& f, Args&& ... args)
-        {
-            { invoke(forward<F>(f), forward<Args>(args)...) } noexcept;
-        };
+    requires(F&& f, Args&& ... args)
+    {
+        { invoke(forward<F>(f), forward<Args>(args)...) } noexcept;
+    };
 }
