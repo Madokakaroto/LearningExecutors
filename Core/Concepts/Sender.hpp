@@ -16,6 +16,7 @@ namespace std::execution
         receiver<R> &&
         requires(S&& s, R&& r)
         {
-            connect(move(s), move(r));
+            // TODO ... remove quote
+            /*execution::*/connect(move(s), move(r));
         };
 }

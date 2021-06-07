@@ -26,14 +26,14 @@ namespace std::execution
         {
             template <typename R, typename ... Args> requires (default_exclude_customise<R, Args...>)
             decltype(auto) operator() (R&& r, Args&& ... args) const
-            noexcept(noexcept(forward<R>(r).set_value(forward<Args>(args)...)))
+                noexcept(noexcept(forward<R>(r).set_value(forward<Args>(args)...)))
             {
                 return forward<R>(r).set_value(forward<Args>(args)...);
             }
 
             template <typename R, typename ... Args> requires (customise_point<R, Args...>)
             decltype(auto) operator() (R&& r, Args&& ... args) const
-            noexcept(noexcept(set_value(forward<R>(r), forward<Args>(args)...)))
+                noexcept(noexcept(set_value(forward<R>(r), forward<Args>(args)...)))
             {
                 return set_value(forward<R>(r), forward<Args>(args)...);
             }

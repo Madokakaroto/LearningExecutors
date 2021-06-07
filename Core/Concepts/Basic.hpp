@@ -12,13 +12,4 @@ namespace std::execution
 
     template <typename S>
     concept is_sender_base = is_base_of_v<sender_base, S>;
-
-    template <typename O>
-    concept operation_state =
-        destructible<O> &&
-        is_object_v<O> &&
-        requires(O& o)
-        {
-            { start(o) } noexcept;
-        };
 }

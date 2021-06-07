@@ -9,14 +9,18 @@ set(EXECUTORS_CORE
         Core/Forward.hpp
         Core/Traits.hpp
         Core/Adaptor/AsInvocable.hpp
+        Core/Adaptor/AsOperation.hpp
         Core/Adaptor/AsReceiver.hpp
+        Core/Algorithm/Connect.hpp
         Core/Algorithm/Execute.hpp
         Core/Algorithm/SetDone.hpp
         Core/Algorithm/SetError.hpp
         Core/Algorithm/SetValue.hpp
+        Core/Algorithm/Start.hpp
         Core/Algorithm/Submit.hpp
         Core/Concepts/Basic.hpp
         Core/Concepts/Executor.hpp
+        Core/Concepts/OperationState.hpp
         Core/Concepts/Receiver.hpp
         Core/Concepts/Sender.hpp
         Core/Concepts/Std.hpp
