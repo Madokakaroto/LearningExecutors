@@ -36,7 +36,9 @@ namespace std::execution
                 return set_error(forward<R>(r), forward<E>(e));
             }
         };
+
+        inline constexpr func_type set_error{};
     }
 
-    inline constexpr set_error_n::func_type set_error{};
+    using set_error_n::set_error;
 }

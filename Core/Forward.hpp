@@ -17,8 +17,17 @@ namespace std::execution
 
     struct sender_base {};
 
-    struct invocable_archetype
+    struct invocable_archetype { void operator()() & noexcept; };
+
+    namespace connect_n
     {
-        void operator()() & noexcept;
-    };
+        extern inline const struct func_type connect;
+    }
+    using connect_n::connect;
+
+    namespace execute_n
+    {
+        extern inline const struct func_type execute;
+    }
+    using execute_n::execute;
 }

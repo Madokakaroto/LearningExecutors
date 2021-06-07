@@ -12,8 +12,7 @@ namespace std::execution
         equality_comparable<E> &&
         requires(E const& e, F&& f)
         {
-            // TODO ... remove quote
-            /*execution::*/execute(e, forward<F>(f));
+            execution::execute(e, forward<F>(f));
         };
 
     template <typename E>
