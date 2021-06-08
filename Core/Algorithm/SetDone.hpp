@@ -18,19 +18,15 @@ namespace std::execution
                 { set_done(forward<R>(r)) } noexcept;
             };
 
-        template <typename R>
-        concept default_exclude_customise =
-            default_impl<R> && !customise_point<R>;
-
         struct func_type
         {
-            template <typename R> requires(default_exclude_customise<R>)
+            template <typename R> requires(default_impl<R>)
             decltype(auto) operator() (R&& r) const noexcept
             {
                 return forward<R>().set_done();
             }
 
-            template <typename R> requires(customise_point<R>)
+            template <typename R> requires(customise_point<R> && !default_impl<R>)
             decltype(auto) operator() (R&& r) const noexcept
             {
                 return set_done(forward<R>(r));

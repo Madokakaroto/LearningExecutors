@@ -13,5 +13,6 @@
 #include "Core/Concepts/Executor.hpp"
 #include "Core/Adaptor/AsInvocable.hpp"
 #include "Core/Adaptor/AsReceiver.hpp"
+#include "Core/Adaptor/AsOperation.hpp"
 #include "Core/Algorithm/Connect.hpp"
 #include "Core/Traits.hpp"
