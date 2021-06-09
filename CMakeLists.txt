@@ -12,13 +12,13 @@ set(EXECUTORS_CORE
         Core/Adaptor/AsInvocable.hpp
         Core/Adaptor/AsOperation.hpp
         Core/Adaptor/AsReceiver.hpp
-        Core/Algorithm/Connect.hpp
-        Core/Algorithm/Execute.hpp
-        Core/Algorithm/SetDone.hpp
-        Core/Algorithm/SetError.hpp
-        Core/Algorithm/SetValue.hpp
-        Core/Algorithm/Start.hpp
-        Core/Algorithm/Submit.hpp
+        Core/CPOs/Connect.hpp
+        Core/CPOs/Execute.hpp
+        Core/CPOs/SetDone.hpp
+        Core/CPOs/SetError.hpp
+        Core/CPOs/SetValue.hpp
+        Core/CPOs/Start.hpp
+        Core/CPOs/Submit.hpp
         Core/Concepts/Basic.hpp
         Core/Concepts/Executor.hpp
         Core/Concepts/OperationState.hpp
