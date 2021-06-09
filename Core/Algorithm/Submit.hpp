@@ -51,7 +51,6 @@ namespace std::execution
 
         template <typename S, typename R>
         concept customise_point =
-            sender<S> &&
             requires(S&& s, R&& r)
             {
                 submit(forward<S>(s), forward<R>(r));

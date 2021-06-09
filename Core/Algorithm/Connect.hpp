@@ -32,7 +32,7 @@ namespace std::execution
         {
             template <typename S, typename R>
                 requires(default_impl<S, R> && !customise_point<S, R>)
-            decltype(auto) operator() (S&& s, R&& r)
+            decltype(auto) operator() (S&& s, R&& r) const
                 noexcept(noexcept(forward<S>(s).connect(forward<R>(r))))
             {
                 return forward<S>(s).connect(forward<R>(r));
@@ -40,7 +40,7 @@ namespace std::execution
 
             template <typename S, typename R>
                 requires(customise_point<S, R>)
-            decltype(auto) operator() (S&& s, R&& r)
+            decltype(auto) operator() (S&& s, R&& r) const
                 noexcept(noexcept(connect(forward<S>(s), forward<R>(r))))
             {
                 return connect(forward<S>(s), forward<R>(r));
@@ -48,7 +48,7 @@ namespace std::execution
 
             template <typename S, typename R>
                 requires(as_operation_impl<S, R> && !(default_impl<S, R> && customise_point<S, R>))
-            decltype(auto) operator() (S&& s, R&& r)
+            decltype(auto) operator() (S&& s, R&& r) const
                 noexcept(noexcept(as_operation<S, R>{ forward<S>(s), forward<R>(r) }))
             {
                 return as_operation<S, R>{ forward<S>(s), forward<R>(r) };

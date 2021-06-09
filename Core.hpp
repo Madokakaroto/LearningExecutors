@@ -18,3 +18,4 @@
 #include "Core/Adaptor/AsOperation.hpp"
 #include "Core/Algorithm/Connect.hpp"
 #include "Core/Algorithm/Submit.hpp"
+#include "Core/Algorithm/Execute.hpp"
