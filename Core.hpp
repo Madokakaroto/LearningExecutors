@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Forward.hpp"
+#include "Core/Traits.hpp"
 #include "Core/Concepts/Std.hpp"
 #include "Core/Concepts/Basic.hpp"
 #include "Core/Algorithm/SetValue.hpp"
@@ -11,8 +12,9 @@
 #include "Core/Concepts/Sender.hpp"
 #include "Core/Concepts/OperationState.hpp"
 #include "Core/Concepts/Executor.hpp"
+#include "Core/TraitsImpl.hpp"
 #include "Core/Adaptor/AsInvocable.hpp"
 #include "Core/Adaptor/AsReceiver.hpp"
 #include "Core/Adaptor/AsOperation.hpp"
 #include "Core/Algorithm/Connect.hpp"
-#include "Core/Traits.hpp"
+#include "Core/Algorithm/Submit.hpp"

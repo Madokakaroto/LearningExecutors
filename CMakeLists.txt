@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(EXECUTORS_CORE
         Core/Forward.hpp
         Core/Traits.hpp
+        Core/TraitsImpl.hpp
         Core/Adaptor/AsInvocable.hpp
         Core/Adaptor/AsOperation.hpp
         Core/Adaptor/AsReceiver.hpp

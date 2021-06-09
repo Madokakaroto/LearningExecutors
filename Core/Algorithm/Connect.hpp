@@ -30,7 +30,8 @@ namespace std::execution
 
         struct func_type
         {
-            template <typename S, typename R> requires(default_impl<S, R>)
+            template <typename S, typename R>
+                requires(default_impl<S, R> && !customise_point<S, R>)
             decltype(auto) operator() (S&& s, R&& r)
                 noexcept(noexcept(forward<S>(s).connect(forward<R>(r))))
             {
@@ -38,7 +39,7 @@ namespace std::execution
             }
 
             template <typename S, typename R>
-                requires(customise_point<S, R> && !default_impl<S, R>)
+                requires(customise_point<S, R>)
             decltype(auto) operator() (S&& s, R&& r)
                 noexcept(noexcept(connect(forward<S>(s), forward<R>(r))))
             {

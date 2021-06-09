@@ -18,13 +18,9 @@ namespace std::execution
                 start(forward<O>(o));
             };
 
-        template <typename O>
-        concept default_exclude_customise =
-        default_impl<O> && !customise_point<O>;
-
         struct func_type
         {
-            template <typename O> requires(default_exclude_customise<O>)
+            template <typename O> requires(default_impl<O> && !customise_point<O>)
             void operator() (O&& o) const noexcept(noexcept(forward<O>(o).start()))
             {
                 forward<O>(o).start();

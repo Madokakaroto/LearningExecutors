@@ -20,14 +20,14 @@ namespace std::execution
 
         struct func_type
         {
-            template <typename R, typename ... Args> requires (default_impl<R, Args...>)
+            template <typename R, typename ... Args> requires (default_impl<R, Args...> && !customise_point<R, Args...>)
             decltype(auto) operator() (R&& r, Args&& ... args) const
                 noexcept(noexcept(forward<R>(r).set_value(forward<Args>(args)...)))
             {
                 return forward<R>(r).set_value(forward<Args>(args)...);
             }
 
-            template <typename R, typename ... Args> requires (customise_point<R, Args...> && !default_impl<R, Args...>)
+            template <typename R, typename ... Args> requires (customise_point<R, Args...>)
             decltype(auto) operator() (R&& r, Args&& ... args) const
                 noexcept(noexcept(set_value(forward<R>(r), forward<Args>(args)...)))
             {
