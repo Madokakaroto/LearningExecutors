@@ -9,11 +9,10 @@ set(EXECUTORS_CORE
         Core/Forward.hpp
         Core/Traits.hpp
         Core/TraitsImpl.hpp
-        Core/Adaptor/AsInvocable.hpp
-        Core/Adaptor/AsOperation.hpp
-        Core/Adaptor/AsReceiver.hpp
+        Core/CPOs/BulkExecute.hpp
         Core/CPOs/Connect.hpp
         Core/CPOs/Execute.hpp
+        Core/CPOs/Schedule.hpp
         Core/CPOs/SetDone.hpp
         Core/CPOs/SetError.hpp
         Core/CPOs/SetValue.hpp

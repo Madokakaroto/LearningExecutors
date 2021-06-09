@@ -2,6 +2,38 @@
 
 namespace std::execution
 {
+    template <typename R, class>
+    struct as_invocable
+    {
+        explicit as_invocable(R& r) noexcept
+        : r_(addressof(r)) {}
+
+        as_invocable(as_invocable&& other) noexcept
+        : r_(exchange(other.r_, nullptr)) {}
+
+        ~as_invocable()
+        {
+            if(r_)
+            {
+                execution::set_done(move(*r_));
+            }
+        }
+
+        void operator()() & noexcept
+        {
+            try
+            {
+                execution::set_value(move(*r_));
+            }
+            catch (...)
+            {
+                execution::set_error(move(*r_), current_exception());
+            }
+        }
+
+        R* r_;
+    };
+
     namespace connect_n
     {
         template <typename S, typename R>
@@ -27,6 +59,25 @@ namespace std::execution
             negation_v<is_instance_of<remove_cvref_t<R>, as_invocable>> &&
             receiver_of<R> &&
             executor_of_impl<remove_cvref_t<S>, as_invocable<remove_cvref_t<R>, S>>;
+
+        template <typename S, typename R>
+        struct as_operation
+        {
+            remove_cvref_t<S> e_;
+            remove_cvref_t<R> r_;
+
+            void start() noexcept
+            {
+                try
+                {
+                    execution::execute(std::move(e_), as_invocable<remove_cvref_t<R>, S>{ r_ });
+                }
+                catch(...)
+                {
+                    execution::set_error(std::move(r_), current_exception());
+                }
+            }
+        };
 
         struct func_type
         {
