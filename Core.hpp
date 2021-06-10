@@ -16,3 +16,5 @@
 #include "Core/CPOs/Connect.hpp"
 #include "Core/CPOs/Submit.hpp"
 #include "Core/CPOs/Execute.hpp"
+#include "Core/CPOs/BulkExecute.hpp"
+#include "Core/CPOs/Schedule.hpp"
