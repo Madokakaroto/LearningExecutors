@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 set(EXECUTORS_CORE
         Core/Forward.hpp
+        Core/Properties.hpp
         Core/Traits.hpp
         Core/TraitsImpl.hpp
         Core/CPOs/BulkExecute.hpp

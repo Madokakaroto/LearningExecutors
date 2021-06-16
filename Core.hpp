@@ -12,6 +12,7 @@
 #include "Core/Concepts/Sender.hpp"
 #include "Core/Concepts/OperationState.hpp"
 #include "Core/Concepts/Executor.hpp"
+#include "Core/Properties.hpp"
 #include "Core/TraitsImpl.hpp"
 #include "Core/CPOs/Connect.hpp"
 #include "Core/CPOs/Submit.hpp"
