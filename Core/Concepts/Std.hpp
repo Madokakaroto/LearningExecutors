@@ -68,6 +68,15 @@ namespace std
         {
             invoke(forward<F>(f), forward<Args>(args)...);
         };
+
+    template <typename T, typename U>
+    concept same_as = std::is_same_v<T, U> && std::is_same_v<U, T>;
+
+    template <bool Value>
+    concept true_value_constant = same_as<bool_constant<Value>, true_type>;
+
+    template <bool Value>
+    concept false_value_constant = same_as<bool_constant<Value>, false_type>;
 }
 #endif
 

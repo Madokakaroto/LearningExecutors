@@ -13,6 +13,7 @@ set(EXECUTORS_CORE
         Core/CPOs/BulkExecute.hpp
         Core/CPOs/Connect.hpp
         Core/CPOs/Execute.hpp
+        Core/CPOs/Properties.hpp
         Core/CPOs/Schedule.hpp
         Core/CPOs/SetDone.hpp
         Core/CPOs/SetError.hpp
@@ -22,6 +23,7 @@ set(EXECUTORS_CORE
         Core/Concepts/Basic.hpp
         Core/Concepts/Executor.hpp
         Core/Concepts/OperationState.hpp
+        Core/Concepts/Properties.hpp
         Core/Concepts/Receiver.hpp
         Core/Concepts/Sender.hpp
         Core/Concepts/Std.hpp

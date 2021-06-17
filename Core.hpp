@@ -4,6 +4,8 @@
 #include "Core/Traits.hpp"
 #include "Core/Concepts/Std.hpp"
 #include "Core/Concepts/Basic.hpp"
+#include "Core/Concepts/Properties.hpp"
+#include "Core/CPOs/Properties.hpp"
 #include "Core/CPOs/SetValue.hpp"
 #include "Core/CPOs/SetError.hpp"
 #include "Core/CPOs/SetDone.hpp"
