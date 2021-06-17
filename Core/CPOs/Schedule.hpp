@@ -72,5 +72,9 @@ namespace std::execution
                 return as_sender<remove_cvref_t<E>>{ forward<E>(e) };
             }
         };
+
+        inline constexpr func_type schedule{};
     }
+
+    using schedule_n::schedule;
 }

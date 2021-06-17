@@ -52,5 +52,7 @@ namespace std::execution
                 execution::submit(forward<S>(s), as_receiver_t{ forward<F>(f) });
             }
         };
+
+        inline func_type const execute{};
     }
 }
