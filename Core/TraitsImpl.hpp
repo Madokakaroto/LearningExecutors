@@ -2,6 +2,12 @@
 
 namespace std::execution
 {
+    template <typename S>
+    struct sender_traits
+    {
+        using __unspecialized = void;
+    };
+
     template <has_sender_types S>
     struct sender_traits<S>
     {
@@ -18,8 +24,9 @@ namespace std::execution
         static constexpr bool sends_done = S::sends_done;
     };
 
-    template <typename T> requires (has_sender_types<T> && executor_of_impl<T, invocable_archetype>)
-    struct sender_traits<T>
+    template <typename S> requires(!has_sender_types<S> && executor_of_impl<S, as_invocable<void_receiver, S>>)
+    //template <typename S> requires (!has_sender_types<S> && executor_of_impl<S, invocable_archetype>)
+    struct sender_traits<S>
     {
         template
         <
@@ -30,6 +37,8 @@ namespace std::execution
 
         template <template <typename...> class Variant>
         using error_types = Variant<exception_ptr>;
+
+        static constexpr bool sends_done = true;
     };
 
     template <is_sender_base S> requires (!has_sender_types<S>)

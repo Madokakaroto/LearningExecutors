@@ -25,6 +25,7 @@ set(EXECUTORS_CORE
         Core/Concepts/OperationState.hpp
         Core/Concepts/Properties.hpp
         Core/Concepts/Receiver.hpp
+        Core/Concepts/Scheduler.hpp
         Core/Concepts/Sender.hpp
         Core/Concepts/Std.hpp
     )

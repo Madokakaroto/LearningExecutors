@@ -47,7 +47,6 @@ struct test_set_value_default
     int value_{ 0 };
 };
 
-
 int main(void)
 {
     static_assert(std::execution::sender_traits<test_sender_traits>::sends_done);
