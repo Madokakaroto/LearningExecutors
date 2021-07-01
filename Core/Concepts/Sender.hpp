@@ -14,10 +14,7 @@ namespace std::execution
     concept sender_to =
         sender<S> &&
         receiver<R> &&
-        requires(S&& s, R&& r)
-        {
-            execution::connect(move(s), move(r));
-        };
+        is_sender_to_impl_v<S, R>;
 
     // A sender is typed if it declares what types it sends through a receiver’s channels.
     template <typename S>

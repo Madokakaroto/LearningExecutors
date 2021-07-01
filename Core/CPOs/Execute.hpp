@@ -53,6 +53,24 @@ namespace std::execution
             }
         };
 
-        inline func_type const execute{};
+        inline constexpr func_type execute{};
+    }
+
+    using execute_n::execute;
+
+    namespace connect_n
+    {
+        template <typename S, typename R>
+        void as_operation<S, R>::start() noexcept
+        {
+            try
+            {
+                execution::execute(std::move(e_), as_invocable<remove_cvref_t<R>, S>{ r_ });
+            }
+            catch(...)
+            {
+                execution::set_error(std::move(r_), current_exception());
+            }
+        }
     }
 }

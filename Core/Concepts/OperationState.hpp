@@ -6,8 +6,8 @@ namespace std::execution
     concept operation_state =
         destructible<O> &&
         is_object_v<O> &&
-        requires(O& o)
+        requires(O&& o)
         {
-            { execution::start(o) } noexcept;
+            { execution::start(forward<O>(o)) } noexcept;
         };
 }

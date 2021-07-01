@@ -24,16 +24,4 @@ namespace std::execution
 
     template <typename, typename>
     struct as_invocable;
-
-    namespace connect_n
-    {
-        extern struct func_type const connect;
-    }
-    using connect_n::connect;
-
-    namespace execute_n
-    {
-        extern struct func_type const execute;
-    }
-    using execute_n::execute;
 }

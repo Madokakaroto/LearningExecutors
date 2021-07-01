@@ -74,7 +74,7 @@ int main(void)
         printf("i=%d, j=%d, k=%d", i, j, k);
     };
 
-    std::execution::connect(std::execution::then(just_sender, f), sink);
+    std::execution::start(std::execution::connect(std::execution::then(just_sender, f), sink));
 
     return 1;
 }

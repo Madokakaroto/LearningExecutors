@@ -15,12 +15,13 @@
 #include "Core/Concepts/OperationState.hpp"
 #include "Core/Concepts/Executor.hpp"
 #include "Core/Properties.hpp"
-#include "Core/TraitsImpl.hpp"
 #include "Core/CPOs/Connect.hpp"
 #include "Core/CPOs/Submit.hpp"
 #include "Core/CPOs/Execute.hpp"
+#include "Core/TraitsImpl.hpp"
 #include "Core/CPOs/BulkExecute.hpp"
 #include "Core/CPOs/Schedule.hpp"
+
 #include "Core/Concepts/Scheduler.hpp"
 
 #include "Core/Algorithms/Then.hpp"

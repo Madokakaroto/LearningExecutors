@@ -8,7 +8,7 @@ namespace std::execution
         concept default_impl =
             requires(O&& o)
             {
-                forward<O>().start();
+                forward<O>(o).start();
             };
 
         template <typename O>

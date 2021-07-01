@@ -73,11 +73,11 @@ namespace std::execution
                 return sender_type{ {}, move(s), move(f) };
             }
 
-            //template <typename S, typename F> requires customise_point<S, F>
-            //decltype(auto) operator()(S s, F f) const noexcept(noexcept(then(move(s), move(f))))
-            //{
-            //    return then(move(s), move(f));
-            //}
+            template <typename S, typename F> requires customise_point<S, F>
+            decltype(auto) operator()(S s, F f) const noexcept(noexcept(then(move(s), move(f))))
+            {
+                return then(move(s), move(f));
+            }
         } then{};
     }
 

@@ -66,17 +66,7 @@ namespace std::execution
             remove_cvref_t<S> e_;
             remove_cvref_t<R> r_;
 
-            void start() noexcept
-            {
-                try
-                {
-                    execution::execute(std::move(e_), as_invocable<remove_cvref_t<R>, S>{ r_ });
-                }
-                catch(...)
-                {
-                    execution::set_error(std::move(r_), current_exception());
-                }
-            }
+            void start() noexcept;
         };
 
         struct func_type
@@ -106,6 +96,11 @@ namespace std::execution
             }
         };
 
-        inline func_type const connect{};
+        inline constexpr func_type connect{};
     }
+
+    using connect_n::connect;
+
+    template <typename S, typename R>
+    using connect_result_t = invoke_result_t<decltype(connect), S, R>;
 }

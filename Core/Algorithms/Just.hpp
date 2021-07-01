@@ -27,16 +27,29 @@ namespace std::execution
             {
                 R r_;
                 std::tuple<Args...> tuple_;
-                void start() && noexcept try
+                void start() && noexcept
                 {
-                    apply([this](Args&& ... args) mutable
+                    if constexpr(is_nothrow_invocable_v<decltype(execution::set_value), R&&, Args...>)
                     {
-                        execution::set_value(move(r_), move(args)...);
-                    }, move(tuple_));
-                }
-                catch(...)
-                {
-                    execution::set_error(move(r_), current_exception());
+                        apply([this](Args&& ... args) mutable
+                        {
+                            execution::set_value(move(r_), forward<Args>(args)...);
+                        }, move(tuple_));
+                    }
+                    else
+                    {
+                        try
+                        {
+                            apply([this](Args&& ... args) mutable
+                            {
+                                execution::set_value(move(r_), forward<Args>(args)...);
+                            }, move(tuple_));
+                        }
+                        catch(...)
+                        {
+                            execution::set_error(move(r_), current_exception());
+                        }
+                    }
                 }
             };
 
