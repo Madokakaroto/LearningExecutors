@@ -23,7 +23,7 @@ namespace std::execution
             template <typename R> requires(default_impl<R> && !customise_point<R>)
             decltype(auto) operator() (R&& r) const noexcept
             {
-                return forward<R>().set_done();
+                return forward<R>(r).set_done();
             }
 
             template <typename R> requires(customise_point<R>)

@@ -22,3 +22,6 @@
 #include "Core/CPOs/BulkExecute.hpp"
 #include "Core/CPOs/Schedule.hpp"
 #include "Core/Concepts/Scheduler.hpp"
+
+#include "Core/Algorithms/Then.hpp"
+#include "Core/Algorithms/Just.hpp"

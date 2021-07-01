@@ -47,6 +47,16 @@ struct test_set_value_default
     int value_{ 0 };
 };
 
+inline constexpr struct _sink {
+    void set_value(auto&&...) const noexcept {}
+    [[noreturn]] void set_error(auto&&) const noexcept {
+        std::terminate();
+    }
+    [[noreturn]] void set_done() const noexcept {
+        std::terminate();
+    }
+} sink{};
+
 int main(void)
 {
     static_assert(std::execution::sender_traits<test_sender_traits>::sends_done);
@@ -57,6 +67,14 @@ int main(void)
 
     std::execution::set_value(custom_v, 1);
     //exec::set_value(1, 1);
+
+    auto just_sender = std::execution::just(1, 2, 3);
+    auto f = [](int i, int j, int k) noexcept
+    {
+        printf("i=%d, j=%d, k=%d", i, j, k);
+    };
+
+    std::execution::connect(std::execution::then(just_sender, f), sink);
 
     return 1;
 }

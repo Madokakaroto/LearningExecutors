@@ -10,6 +10,7 @@ set(EXECUTORS_CORE
         Core/Properties.hpp
         Core/Traits.hpp
         Core/TraitsImpl.hpp
+        Core/Algorithms/Then.hpp
         Core/CPOs/BulkExecute.hpp
         Core/CPOs/Connect.hpp
         Core/CPOs/Execute.hpp
@@ -37,4 +38,4 @@ add_executable(Executors
         Forward.hpp
         main.cpp)
 
-link_libraries(Executors -lc++)
+link_libraries(Executors -lc++ -lstdc++)
