@@ -1,4 +1,7 @@
 #pragma once
 
-#include "Forward.hpp"
-#include "Core.hpp"
+#include <exception>
+#include <type_traits>
+#include <functional>
+#include "Core/Core.hpp"
+#include "Algorithms/Algorithms.hpp"

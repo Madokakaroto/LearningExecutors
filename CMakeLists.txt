@@ -6,11 +6,11 @@ set(CMAKE_CXX_STANDARD 20)
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Xclang -fconcepts-ts")
 
 set(EXECUTORS_CORE
+        Core/Core.hpp
         Core/Forward.hpp
         Core/Properties.hpp
         Core/Traits.hpp
         Core/TraitsImpl.hpp
-        Core/Algorithms/Then.hpp
         Core/CPOs/BulkExecute.hpp
         Core/CPOs/Connect.hpp
         Core/CPOs/Execute.hpp
@@ -31,11 +31,18 @@ set(EXECUTORS_CORE
         Core/Concepts/Std.hpp
     )
 
+set(EXECUTORS_ALGORITHMS
+        Algorithms/Algorithms.hpp
+        Algorithms/Then.hpp
+        Algorithms/Just.hpp
+        )
+
 add_executable(Executors
         ${EXECUTORS_CORE}
-        Core.hpp
+        ${EXECUTORS_ALGORITHMS}
         Executors.hpp
-        Forward.hpp
-        main.cpp)
+        Test/main.cpp)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 link_libraries(Executors -lc++ -lstdc++)
