@@ -37,9 +37,19 @@ set(EXECUTORS_ALGORITHMS
         Algorithms/Just.hpp
         )
 
+set(EXECUTORS_MEMORY
+        Memory/BlockingQueue.hpp
+        Memory/Memory.hpp
+    )
+
+set(EXECUTORS_CONTEXTS
+        Contexts/StaticThreadPool.hpp
+    )
+
 add_executable(Executors
         ${EXECUTORS_CORE}
         ${EXECUTORS_ALGORITHMS}
+        ${EXECUTORS_MEMORY}
         Executors.hpp
         Test/main.cpp)
 

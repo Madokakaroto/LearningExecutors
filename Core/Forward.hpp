@@ -2,6 +2,8 @@
 
 namespace std::execution
 {
+    using task_t = std::function<void()>;
+
     struct sender_base {};
 
     // The name execution::invocable_archetype is an implementation-defined type such that invocable<execution::invocable_archetype&> is true.
