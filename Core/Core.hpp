@@ -22,3 +22,8 @@
 #include "Core/CPOs/BulkExecute.hpp"
 #include "Core/CPOs/Schedule.hpp"
 #include "Core/Concepts/Scheduler.hpp"
+
+// adaptors
+#include "Core/Adaptors/AsErrorReceiver.hpp"
+#include "Core/Adaptors/AsDoneReceiver.hpp"
+#include "Core/Adaptors/AsValueReceiver.hpp"

@@ -11,6 +11,9 @@ set(EXECUTORS_CORE
         Core/Properties.hpp
         Core/Traits.hpp
         Core/TraitsImpl.hpp
+        Core/Adaptors/AsDoneReceiver.hpp
+        Core/Adaptors/AsErrorReceiver.hpp
+        Core/Adaptors/AsValueReceiver.hpp
         Core/CPOs/BulkExecute.hpp
         Core/CPOs/Connect.hpp
         Core/CPOs/Execute.hpp
@@ -34,6 +37,7 @@ set(EXECUTORS_CORE
 set(EXECUTORS_ALGORITHMS
         Algorithms/Algorithms.hpp
         Algorithms/Just.hpp
+        Algorithms/On.hpp
         Algorithms/SyncWait.hpp
         Algorithms/Then.hpp
         )

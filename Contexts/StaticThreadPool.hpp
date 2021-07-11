@@ -34,6 +34,10 @@ namespace std::execution
             // connect
             template <receiver_of<> Receiver>
             _op<remove_cvref_t<Receiver>> connect(Receiver&& r) const;
+
+            // submit
+            template <receiver_of<> Receiver>
+            void submit(Receiver&& r) const;
         };
 
         class _scheduler_type
@@ -44,7 +48,7 @@ namespace std::execution
             _scheduler_type(execution::static_thread_pool& pool);
 
             // scheduler interface
-            _sender_type scheduler() noexcept;
+            _sender_type scheduler() const noexcept;
 
             // operator (not) equal compare
             friend bool operator ==(_scheduler_type const& lhs, _scheduler_type const& rhs) noexcept;
@@ -117,12 +121,18 @@ namespace std::execution
             return _op<remove_cvref_t<Receiver>>{ pool_, move(r) };
         }
 
+        template <receiver_of<> Receiver>
+        inline void _sender_type::submit(Receiver&& r) const
+        {
+            execution::start(execution::connect(move(*this), forward<Receiver>(r)));
+        }
+
         // implementation of _scheduler_type
         inline _scheduler_type::_scheduler_type(execution::static_thread_pool& pool)
             : pool_(pool)
         {}
 
-        inline _sender_type _scheduler_type::scheduler() noexcept
+        inline _sender_type _scheduler_type::scheduler() const noexcept
         {
             return _sender_type{ this->pool_ };
         }

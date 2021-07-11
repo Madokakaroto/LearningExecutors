@@ -15,8 +15,26 @@ namespace std::execution
             };
 
         template <move_constructible ... Args>
-        struct _sender_type : sender_base
+        struct _sender_type
         {
+            //  for sender traits
+            template
+            <
+                template <typename ...> class Variant,
+                template <typename ...> class Tuple
+            >
+            using value_types = Variant<Tuple<Args...>>;
+
+            template
+            <
+                template <typename ...> class Variant
+            >
+            using error_types = Variant<exception_ptr>;
+
+            static constexpr bool sends_done = false;
+            // end of sender traits
+
+            // values member
             std::tuple<Args...> tuple_;
 
             explicit(sizeof...(Args) == 1) constexpr _sender_type(Args ... args)

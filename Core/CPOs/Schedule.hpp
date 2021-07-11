@@ -77,4 +77,7 @@ namespace std::execution
     }
 
     using schedule_n::schedule;
+
+    template <typename S>
+    using schedule_result_t = invoke_result_t<decltype(execution::schedule), S>;
 }

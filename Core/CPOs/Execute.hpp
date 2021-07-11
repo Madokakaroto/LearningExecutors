@@ -58,6 +58,9 @@ namespace std::execution
 
     using execute_n::execute;
 
+    template <typename E, typename F>
+    using execute_result_t = invoke_result_t<decltype(execution::execute), E, F>;
+
     namespace connect_n
     {
         template <typename S, typename R>

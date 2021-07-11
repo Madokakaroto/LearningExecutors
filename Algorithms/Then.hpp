@@ -2,9 +2,6 @@
 
 namespace std::execution
 {
-    template <typename S, typename R> requires sender_to<S, R>
-    using state_t = decltype(execution::connect(declval<S>(), declval<R>()));
-
     namespace then_n
     {
         template <receiver R, typename F>
@@ -49,7 +46,7 @@ namespace std::execution
             F f_;
 
             template <receiver R> requires(sender_to<S, _receiver_type<R, F>>)
-            auto connect(R r) && -> state_t<S, _receiver_type<R, F>>
+            auto connect(R r) && -> connect_result_t<S, _receiver_type<R, F>>
             {
                 using receiver_type = _receiver_type<R, F>;
                 return execution::connect(move(s_), receiver_type{ move(r), move(f_) });

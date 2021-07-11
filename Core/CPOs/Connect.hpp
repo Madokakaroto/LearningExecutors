@@ -102,5 +102,5 @@ namespace std::execution
     using connect_n::connect;
 
     template <typename S, typename R>
-    using connect_result_t = invoke_result_t<decltype(connect), S, R>;
+    using connect_result_t = invoke_result_t<decltype(execution::connect), S, R>;
 }
