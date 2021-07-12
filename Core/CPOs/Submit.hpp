@@ -100,9 +100,7 @@ namespace std::execution
                 execution::start((new submit_state<S, R>{ forward<S>(s), forward<R>(r) })->state_);
             }
         };
-
-        inline constexpr func_type submit{};
     }
 
-    using submit_n::submit;
+    inline constexpr submit_n::func_type submit{};
 }

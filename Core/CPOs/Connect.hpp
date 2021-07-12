@@ -71,29 +71,10 @@ namespace std::execution
             {
                 return connect(forward<S>(s), forward<R>(r));
             }
-
-            /*template <typename S, typename R>
-                requires(as_operation_impl<S, R> && !(default_impl<S, R> && customise_point<S, R>))
-            decltype(auto) operator() (S&& s, R&& r) const
-                noexcept(noexcept(as_operation<S, R>{ forward<S>(s), forward<R>(r) }))
-            {
-                return as_operation<S, R>{ forward<S>(s), forward<R>(r) };
-            }*/
         };
-
-        inline constexpr func_type connect{};
     }
 
-    using connect_n::connect;
-
-    template <typename S, typename R>
-    concept sender_to =
-        sender<S> &&
-        receiver<R> &&
-        requires(S&& s, R&& r)
-        {
-            execution::connect(forward<S>(s), forward<R>(r));
-        };
+    inline constexpr connect_n::func_type connect{};
 
     template <typename S, typename R>
     using connect_result_t = invoke_result_t<decltype(execution::connect), S, R>;

@@ -32,9 +32,7 @@ namespace std::execution
                 start(forward<O>(o));
             }
         };
-
-        inline constexpr func_type start{};
     }
 
-    using start_n::start;
+    inline constexpr start_n::func_type start{};
 }

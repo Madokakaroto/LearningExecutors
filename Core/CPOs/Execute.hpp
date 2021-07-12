@@ -52,11 +52,9 @@ namespace std::execution
                 execution::submit(forward<S>(s), as_receiver_t{ forward<F>(f) });
             }
         };
-
-        inline constexpr func_type execute{};
     }
 
-    using execute_n::execute;
+    inline constexpr execute_n::func_type execute{};
 
     template <typename E, typename F>
     using execute_result_t = invoke_result_t<decltype(execution::execute), E, F>;

@@ -85,7 +85,7 @@ namespace std::execution
             }
         };
 
-        constexpr struct func_type
+        struct func_type
         {
             template <typename ... Args> requires(customise_point<Args...>)
             decltype(auto) operator() (Args&& ... args) const
@@ -101,8 +101,8 @@ namespace std::execution
                 using sender_type = _sender_type<remove_cvref_t<Args>...>;
                 return sender_type{ forward<Args>(args)... };
             }
-        } just{};
+        };
     }
 
-    using just_n::just;
+    inline constexpr just_n::func_type just{};
 }

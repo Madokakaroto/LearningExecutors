@@ -34,9 +34,7 @@ namespace std::execution
                 return set_value(forward<R>(r), forward<Args>(args)...);
             }
         };
-
-        inline constexpr func_type set_value{};
     }
 
-    using set_value_n::set_value;
+    inline constexpr set_value_n::func_type set_value{};
 }

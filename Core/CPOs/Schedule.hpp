@@ -72,11 +72,9 @@ namespace std::execution
                 return as_sender<remove_cvref_t<E>>{ forward<E>(e) };
             }
         };
-
-        inline constexpr func_type schedule{};
     }
 
-    using schedule_n::schedule;
+    inline constexpr schedule_n::func_type schedule{};
 
     template <typename S>
     using schedule_result_t = invoke_result_t<decltype(execution::schedule), S>;

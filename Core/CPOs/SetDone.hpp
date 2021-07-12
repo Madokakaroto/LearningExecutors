@@ -32,9 +32,7 @@ namespace std::execution
                 return set_done(forward<R>(r));
             }
         };
-
-        inline constexpr func_type set_done{};
     }
 
-    using set_done_n::set_done;
+    inline constexpr set_done_n::func_type set_done{};
 }

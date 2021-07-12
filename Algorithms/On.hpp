@@ -100,11 +100,9 @@ namespace std::execution
                 return on(forward<S>(s), forward<Sch>(sch));
             }
         };
-
-        inline constexpr func_type on{};
     }
 
-    using on_n::on;
+    inline constexpr on_n::func_type on{};
 
     template <typename S, typename Sch>
     using on_result_t = invoke_result_t<decltype(execution::on), S, Sch>;

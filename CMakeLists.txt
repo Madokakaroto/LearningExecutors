@@ -22,6 +22,7 @@ set(EXECUTORS_CORE
         Core/CPOs/SetDone.hpp
         Core/CPOs/SetError.hpp
         Core/CPOs/SetValue.hpp
+        Core/CPOs/StandardExt.hpp
         Core/CPOs/Start.hpp
         Core/CPOs/Submit.hpp
         Core/Concepts/Basic.hpp
@@ -31,6 +32,7 @@ set(EXECUTORS_CORE
         Core/Concepts/Receiver.hpp
         Core/Concepts/Scheduler.hpp
         Core/Concepts/Sender.hpp
+        Core/Concepts/SenderTo.hpp
         Core/Concepts/Std.hpp
     )
 

@@ -60,7 +60,7 @@ namespace std::execution
                 then(move(s), move(f));
             };
 
-        constexpr struct func_type
+        struct func_type
         {
             // default implementation no constraints
             template <typename S, typename F>
@@ -75,8 +75,8 @@ namespace std::execution
             {
                 return then(move(s), move(f));
             }
-        } then{};
+        };
     }
 
-    using then_n::then;
+    inline constexpr then_n::func_type then{};
 }
