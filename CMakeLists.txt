@@ -43,6 +43,7 @@ set(EXECUTORS_ALGORITHMS
         Algorithms/On.hpp
         Algorithms/SyncWait.hpp
         Algorithms/Transform.hpp
+        Algorithms/PipeOperator.hpp
         )
 
 set(EXECUTORS_MEMORY

@@ -64,6 +64,12 @@ namespace std::execution
             }
         };
 
+        template <scheduler Sch>
+        struct _pipe_operand
+        {
+            Sch sch_;
+        };
+
         template <typename S, typename Sch>
         concept has_on_impl =
             requires(S&& s, Sch&& sch)
@@ -98,6 +104,12 @@ namespace std::execution
                 noexcept(noexcept(on(declval<S>(), declval<Sch>())))
             {
                 return on(forward<S>(s), forward<Sch>(sch));
+            }
+
+            template <scheduler Sch>
+            auto operator() (Sch&& sch) const noexcept
+            {
+                return _pipe_operand_type{ *this, forward<Sch>(sch) };
             }
         };
     }

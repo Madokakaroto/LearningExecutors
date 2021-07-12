@@ -74,6 +74,12 @@ namespace std::execution
             {
                 return transform(forward<S>(s), forward<F>(f));
             }
+
+            template <typename F>
+            auto operator() (F&& f) const noexcept
+            {
+                return _pipe_operand_type{ *this, forward<F>(f) };
+            }
         };
     }
 

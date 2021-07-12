@@ -80,6 +80,9 @@ int main(void)
     std::execution::static_thread_pool pool{ 4 };
     std::execution::on(std::execution::just(2), pool.get_scheduler());
     std::execution::just_on(pool.get_scheduler(), 2);
+    std::execution::just(2)
+        | std::execution::on(pool.get_scheduler())
+        | std::execution::transform([](int i){ return static_cast<double>(i) * 2.0; });
 
     return 1;
 }
