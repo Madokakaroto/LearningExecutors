@@ -6,18 +6,18 @@ namespace std::execution
     concept receiver =
         move_constructible<remove_cvref_t<R>> &&
         constructible_from<remove_cvref_t<R>, R> &&
-        requires(R&& r, E&& e)
+        requires(remove_cvref_t<R>&& r, E&& e)
         {
-            { execution::set_done(forward<R>(r)) } noexcept;
-            { execution::set_error(forward<R>(r), forward<E>(e)) } noexcept;
+            { execution::set_done(move(r)) } noexcept;
+            { execution::set_error(move(r), move(e)) } noexcept;
         };
 
     template <typename R, typename ... Args>
     concept receiver_of =
         receiver<R> &&
-        requires(R&& r, Args&& ... args)
+        requires(remove_cvref_t<R>&& r, Args&& ... args)
         {
-            execution::set_value(forward<R>(r), forward<Args>(args)...);
+            execution::set_value(move(r), forward<Args>(args)...);
         };
 
     template <typename R, typename ... Args>

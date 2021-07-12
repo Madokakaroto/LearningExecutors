@@ -39,9 +39,10 @@ set(EXECUTORS_CORE
 set(EXECUTORS_ALGORITHMS
         Algorithms/Algorithms.hpp
         Algorithms/Just.hpp
+        Algorithms/JustOn.hpp
         Algorithms/On.hpp
         Algorithms/SyncWait.hpp
-        Algorithms/Then.hpp
+        Algorithms/Transform.hpp
         )
 
 set(EXECUTORS_MEMORY

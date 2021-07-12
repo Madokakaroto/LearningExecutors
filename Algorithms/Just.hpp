@@ -5,7 +5,7 @@ namespace std::execution
     namespace just_n
     {
         template <typename ... Args>
-        concept default_impl = (move_constructible<Args> && ...);
+        concept default_impl = (move_constructible<remove_cvref_t<Args>> && ...);
 
         template <typename ... Args>
         concept customise_point =
@@ -51,7 +51,7 @@ namespace std::execution
                     {
                         apply([this](Args&& ... args) mutable
                         {
-                            execution::set_value(move(r_), forward<Args>(args)...);
+                            execution::set_value(move(r_), move(args)...);
                         }, move(tuple_));
                     }
                     else
@@ -60,7 +60,7 @@ namespace std::execution
                         {
                             apply([this](Args&& ... args) mutable
                             {
-                                execution::set_value(move(r_), forward<Args>(args)...);
+                                execution::set_value(move(r_), move(args)...);
                             }, move(tuple_));
                         }
                         catch(...)
@@ -72,16 +72,16 @@ namespace std::execution
             };
 
             template <receiver_of<Args...> R> requires(copy_constructible<Args> && ...)
-            auto connect(R r) const &
-                noexcept(is_nothrow_constructible_v<_op<R>, R&&, std::tuple<Args...>>) -> _op<R>
+            auto connect(R&& r) const &
+                noexcept(is_nothrow_constructible_v<_op<R>, R, std::tuple<Args...>>) -> _op<remove_cvref_t<R>>
             {
-                return _op<R>{ move(r), tuple_ };
+                return _op<remove_cvref_t<R>>{ forward<R>(r), tuple_ };
             }
 
             template <receiver_of<Args...> R>
-            auto connect(R r) && noexcept -> _op<R>
+            auto connect(R&& r) && noexcept -> _op<remove_cvref_t<R>>
             {
-                return _op<R>{ move(r), move(tuple_) };
+                return _op<remove_cvref_t<R>>{ forward<R>(r), move(tuple_) };
             }
         };
 

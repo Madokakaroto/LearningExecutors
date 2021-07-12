@@ -10,9 +10,9 @@ namespace std::execution
         copy_constructible<E> &&
         is_nothrow_copy_constructible_v<E> &&
         equality_comparable<E> &&
-        requires(E&& e, F&& f)
+        requires(E const& e, F&& f)
         {
-            execution::execute(forward<E>(e), forward<F>(f));
+            execution::execute(e, forward<F>(f));
         };
 
     template <typename E>

@@ -8,7 +8,7 @@ namespace std::execution
         R r_;
         std::tuple<Vs...> vs_;
 
-        explicit(sizeof...(Vs) == 1) value_receiver(R&& r, Vs&& ... vs)
+        explicit(sizeof...(Vs) == 0) value_receiver(R&& r, Vs&& ... vs)
             : r_(move(r))
             , vs_({ forward<Vs>(vs)... })
         {}

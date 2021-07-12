@@ -11,12 +11,12 @@ namespace std::execution
             S s_;                               // senders of the scheduler
             R r_;                               // receiver to connect
 
-            _receiver_type(S&& s, R&& r)
+            _receiver_type(S s, R r)
                 : s_(move(s))
                 , r_(move(r))
             {}
 
-            _receiver_type(S&& s, R const& r)
+            _receiver_type(S s, R const& r)
                 : s_(move(s))
                 , r_(r)
             {}
@@ -50,7 +50,7 @@ namespace std::execution
             S s_;
             schedule_result_t<Sch> ssch_;
 
-            _sender_type(S&& s, Sch&& sch)
+            _sender_type(S s, Sch sch)
                 : s_(move(s))
                 , ssch_(execution::schedule(move(sch)))
             {

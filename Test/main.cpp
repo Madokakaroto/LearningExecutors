@@ -74,11 +74,12 @@ int main(void)
         printf("i=%d, j=%d, k=%d", i, j, k);
     };
 
-    std::execution::start(std::execution::connect(std::execution::then(just_sender, f), sink));
+    std::execution::start(std::execution::connect(std::execution::transform(just_sender, f), sink));
 
 
     std::execution::static_thread_pool pool{ 4 };
     std::execution::on(std::execution::just(2), pool.get_scheduler());
+    std::execution::just_on(pool.get_scheduler(), 2);
 
     return 1;
 }
