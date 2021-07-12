@@ -84,5 +84,7 @@ int main(void)
         | std::execution::on(pool.get_scheduler())
         | std::execution::transform([](int i){ return static_cast<double>(i) * 2.0; });
 
+    std::execution::sync_wait(std::execution::just(2, 3));
+
     return 1;
 }

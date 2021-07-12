@@ -8,6 +8,8 @@
 #include <memory>
 #include <atomic>
 #include <deque>
+#include <variant>
+#include <condition_variable>
 #include "Core/Core.hpp"
 #include "Algorithms/Algorithms.hpp"
 #include "Memory/Memory.hpp"
