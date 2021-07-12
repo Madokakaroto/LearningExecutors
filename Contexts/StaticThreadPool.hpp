@@ -48,7 +48,7 @@ namespace std::execution
             _scheduler_type(execution::static_thread_pool& pool);
 
             // scheduler interface
-            _sender_type scheduler() const noexcept;
+            _sender_type schedule() const noexcept;
 
             // operator (not) equal compare
             friend bool operator ==(_scheduler_type const& lhs, _scheduler_type const& rhs) noexcept;
@@ -132,7 +132,7 @@ namespace std::execution
             : pool_(pool)
         {}
 
-        inline _sender_type _scheduler_type::scheduler() const noexcept
+        inline _sender_type _scheduler_type::schedule() const noexcept
         {
             return _sender_type{ this->pool_ };
         }

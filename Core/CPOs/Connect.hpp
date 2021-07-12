@@ -54,21 +54,6 @@ namespace std::execution
                 connect(forward<S>(s), forward<R>(r));
             };
 
-        template <typename S, typename R>
-        concept as_operation_impl =
-            negation_v<is_instance_of<remove_cvref_t<R>, as_invocable>> &&
-            receiver_of<R> &&
-            executor_of_impl<remove_cvref_t<S>, as_invocable<remove_cvref_t<R>, S>>;
-
-        template <typename S, typename R>
-        struct as_operation
-        {
-            remove_cvref_t<S> e_;
-            remove_cvref_t<R> r_;
-
-            void start() noexcept;
-        };
-
         struct func_type
         {
             template <typename S, typename R>
@@ -87,19 +72,28 @@ namespace std::execution
                 return connect(forward<S>(s), forward<R>(r));
             }
 
-            template <typename S, typename R>
+            /*template <typename S, typename R>
                 requires(as_operation_impl<S, R> && !(default_impl<S, R> && customise_point<S, R>))
             decltype(auto) operator() (S&& s, R&& r) const
                 noexcept(noexcept(as_operation<S, R>{ forward<S>(s), forward<R>(r) }))
             {
                 return as_operation<S, R>{ forward<S>(s), forward<R>(r) };
-            }
+            }*/
         };
 
         inline constexpr func_type connect{};
     }
 
     using connect_n::connect;
+
+    template <typename S, typename R>
+    concept sender_to =
+        sender<S> &&
+        receiver<R> &&
+        requires(S&& s, R&& r)
+        {
+            execution::connect(forward<S>(s), forward<R>(r));
+        };
 
     template <typename S, typename R>
     using connect_result_t = invoke_result_t<decltype(execution::connect), S, R>;

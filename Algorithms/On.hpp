@@ -45,7 +45,7 @@ namespace std::execution
         // S is the original sender
         // Sch is the scheduler where values of the sender are proprgated on
         template <sender S, scheduler Sch>
-        struct _sender_type
+        struct _sender_type : sender_base
         {
             S s_;
             schedule_result_t<Sch> ssch_;

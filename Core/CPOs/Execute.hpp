@@ -27,7 +27,7 @@ namespace std::execution
         struct func_type
         {
             template <typename E, typename F>
-                requires(executor<E> && invocable<F> && customise_point<E, F>)
+                requires(invocable<F> && customise_point<E, F>)
             decltype(auto) operator() (E&& e, F&& f) const
                 noexcept(noexcept(execute(forward<E>(e), forward<F>(f))))
             {
@@ -35,7 +35,7 @@ namespace std::execution
             }
 
             template <typename E, typename F>
-                requires(executor<E> && invocable<F> && default_impl<E, F> && !customise_point<E, F>)
+                requires(invocable<F> && default_impl<E, F> && !customise_point<E, F>)
             decltype(auto) operator() (E&& e, F&& f) const
                 noexcept(noexcept(forward<E>(e).execute(forward<F>(f))))
             {
@@ -60,20 +60,4 @@ namespace std::execution
 
     template <typename E, typename F>
     using execute_result_t = invoke_result_t<decltype(execution::execute), E, F>;
-
-    namespace connect_n
-    {
-        template <typename S, typename R>
-        void as_operation<S, R>::start() noexcept
-        {
-            try
-            {
-                execution::execute(std::move(e_), as_invocable<remove_cvref_t<R>, S>{ r_ });
-            }
-            catch(...)
-            {
-                execution::set_error(std::move(r_), current_exception());
-            }
-        }
-    }
 }
