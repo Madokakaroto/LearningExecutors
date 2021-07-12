@@ -13,8 +13,8 @@ namespace std::execution
     template <typename S, typename R>
     concept sender_to =
         sender<S> &&
-        receiver<R> &&
-        is_sender_to_impl_v<S, R>;
+        receiver<R> /*&&
+        is_sender_to_impl_v<S, R>*/;
 
     // A sender is typed if it declares what types it sends through a receiver’s channels.
     template <typename S>

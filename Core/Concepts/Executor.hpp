@@ -9,8 +9,8 @@ namespace std::execution
         move_constructible<remove_cvref_t<F>> &&
         copy_constructible<E> &&
         is_nothrow_copy_constructible_v<E> &&
-        equality_comparable<E> &&
-        is_executor_of_impl_v<E, F>;
+        equality_comparable<E> /*&&
+        is_executor_of_impl_v<E, F>*/;
 
     template <typename E>
     concept executor = executor_of_impl<E, invocable_archetype>;

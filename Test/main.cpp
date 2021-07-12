@@ -78,7 +78,6 @@ int main(void)
 
 
     std::execution::static_thread_pool pool{ 4 };
-
     std::execution::on(std::execution::just(2), pool.get_scheduler());
 
     return 1;

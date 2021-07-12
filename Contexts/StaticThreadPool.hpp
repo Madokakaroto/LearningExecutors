@@ -40,7 +40,7 @@ namespace std::execution
             void submit(Receiver&& r) const;
         };
 
-        class _scheduler_type
+        struct _scheduler_type
         {
             friend execution::static_thread_pool;
 

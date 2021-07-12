@@ -57,7 +57,7 @@ namespace std::execution
     template <typename S, typename R>
     inline constexpr bool is_sender_to_impl_v = is_sender_to_impl<S, R>::value;
 
-    template <typename E, typename F>
+    template <typename E, typename F, typename = void>
     struct is_executor_of_impl : false_type {};
     template <typename E, typename F>
     inline constexpr bool is_executor_of_impl_v = is_executor_of_impl<E, F>::value;
