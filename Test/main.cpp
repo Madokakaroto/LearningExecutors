@@ -59,6 +59,8 @@ inline constexpr struct _sink {
 
 int main(void)
 {
+    using namespace std::execution;
+
     static_assert(std::execution::sender_traits<test_sender_traits>::sends_done);
 
     test_set_value_both both_v{};
@@ -74,23 +76,15 @@ int main(void)
         printf("i=%d, j=%d, k=%d\n", i, j, k);
     };
 
-    std::execution::start(std::execution::connect(std::execution::transform(just_sender, f), sink));
+    //std::execution::start(std::execution::connect(std::execution::transform(just_sender, f), sink));
 
 
-    /*std::execution::static_thread_pool pool{ 4 };
-    std::execution::on(std::execution::just(2), pool.get_scheduler());
-    std::execution::just_on(pool.get_scheduler(), 2);
-    std::execution::just(2)
-        | std::execution::on(pool.get_scheduler())
-        | std::execution::transform([](int i){ return static_cast<double>(i) * 2.0; });*/
+    static_thread_pool pool{ 4 };
+    auto r = sync_wait(just(2, 3) | on(pool.get_scheduler()) | transform([](int i, int j){ return (i + j) * 0.2; }));
 
-    //auto [a, b] = std::execution::sync_wait(std::execution::just(2, 3));
-    //printf("a=%d, b=%d\n", a, b);
+    //auto r = sync_wait(just(2, 3) | transform([](int i, int j){ return i + j; }));
 
-    std::execution::static_thread_pool pool{ 4 };
-    std::execution::sync_wait(std::execution::just(2)
-        | std::execution::on(pool.get_scheduler())
-        | std::execution::transform([](int i){ return i + 3; }));
+    //std::cout << a << b << std::endl;
 
     return 1;
 }

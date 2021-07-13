@@ -23,7 +23,7 @@ namespace std::execution
             <
                 template <typename ...> class Variant
             >
-            using error_types = Variant<>;
+            using error_types = Variant<exception_ptr>;
 
             static constexpr bool sends_done = true;
             // end of sender traits

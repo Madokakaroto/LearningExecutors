@@ -21,8 +21,8 @@ namespace std::execution
             {
                 try
                 {
-                    value_receiver<R, remove_cvref_t<Vs>...> r{ move(r_), forward<Vs>(vs)... };
-                    execution::submit(move(s_), move(r));
+                    value_receiver<R, Vs...> r(move(r_), move(vs)... );
+                    //execution::submit(move(s_), move(r));
                 }
                 catch(...)
                 {
