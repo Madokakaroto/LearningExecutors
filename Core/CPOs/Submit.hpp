@@ -93,8 +93,7 @@ namespace std::execution
                 return submit(forward<S>(s), forward<R>(r));
             }
 
-            template <typename S, typename R>
-                requires(sender_to<S, R> && !(default_impl<S, R> && customise_point<S, R>))
+            template <typename S, typename R> requires(sender_to<S, R>)
             decltype(auto) operator() (S&& s, R&& r) const
             {
                 execution::start((new submit_state<S, R>{ forward<S>(s), forward<R>(r) })->state_);

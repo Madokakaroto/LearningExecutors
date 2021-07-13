@@ -224,9 +224,9 @@ namespace std::execution
                 // get the type of recevier
                 using receiver_type = _receiver_type
                 <
-                typename sender_traits<remove_cvref_t<S>>::template value_types<variant, tuple>,
-                typename sender_traits<remove_cvref_t<S>>::template error_types<variant>
-                                                         >;
+                    typename sender_traits<remove_cvref_t<S>>::template value_types<variant, tuple>,
+                    typename sender_traits<remove_cvref_t<S>>::template error_types<variant>
+                >;
 
                 // get the type of promise
                 using promise_t = typename receiver_type::promise_t;

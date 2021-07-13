@@ -19,21 +19,42 @@ namespace std::execution
             template <typename ... Vs>
             void set_value(Vs&& ... vs) && noexcept
             {
-                value_receiver r{ move(r_), forward<Vs>(vs)... };
-                execution::submit(move(s_), move(r));
+                try
+                {
+                    value_receiver<R, remove_cvref_t<Vs>...> r{ move(r_), forward<Vs>(vs)... };
+                    execution::submit(move(s_), move(r));
+                }
+                catch(...)
+                {
+                    execution::set_error(move(r_), current_exception());
+                }
             }
 
             template <typename E>
             void set_error(E&& e) && noexcept
             {
-                error_receiver r{ move(r_), forward<E>(e) };
-                execution::submit(move(s_), move(r));
+                try
+                {
+                    error_receiver r{ move(r_), forward<E>(e) };
+                    execution::submit(move(s_), move(r));
+                }
+                catch(...)
+                {
+                    execution::set_error(move(r_), current_exception());
+                }
             }
 
             void set_done() && noexcept
             {
-                done_receiver r{ move(r_) };
-                execution::submit(move(s_), move(r));
+                try
+                {
+                    done_receiver r{ move(r_) };
+                    execution::submit(move(s_), move(r));
+                }
+                catch(...)
+                {
+                    execution::set_error(move(r_), current_exception());
+                }
             }
         };
 
@@ -72,7 +93,7 @@ namespace std::execution
             auto connect(R&& r) && noexcept(is_nothrow_invocable_v<decltype(execution::connect), S, _receiver_type<schedule_result_t<Sch>, remove_cvref_t<R>>>)
             {
                 _receiver_type propagate_receiver{ move(ssch_), forward<R>(r) };
-                execution::connect(move(s_), move(propagate_receiver));
+                return execution::connect(move(s_), move(propagate_receiver));
             }
         };
 

@@ -2,31 +2,29 @@
 
 namespace std::execution
 {
-    template <typename R, typename ... Vs> requires(receiver_of<R, Vs...>)
+    template <typename R, typename ... Vs> //requires(receiver_of<R, Vs...>)
     struct value_receiver
     {
-        R r_;
-        std::tuple<Vs...> vs_;
+        std::tuple<R, Vs...> rvs_;
 
         explicit(sizeof...(Vs) == 0) value_receiver(R&& r, Vs&& ... vs)
-            : r_(move(r))
-            , vs_({ forward<Vs>(vs)... })
+            : rvs_{ move(r), move(vs)... }
         {}
 
-        void set_value() noexcept(is_nothrow_invocable_v<decltype(execution::set_value), R&&, Vs&&...>)
+        void set_value() && noexcept(is_nothrow_invocable_v<decltype(execution::set_value), R&&, Vs&&...>)
         {
-            apply(execution::set_value, move(r_), move(vs_));
+            apply(execution::set_value, move(rvs_));
         }
 
         template <typename E>
-        void set_error(E&& e) noexcept
+        void set_error(E&& e) && noexcept
         {
-            execution::set_error(move(r_), forward<E>(e));
+            execution::set_error(get<0>(move(rvs_)), forward<E>(e));
         }
 
-        void set_done() noexcept
+        void set_done() && noexcept
         {
-            execution::set_done(move(r_));
+            execution::set_done(get<0>(move(rvs_)));
         }
     };
 }

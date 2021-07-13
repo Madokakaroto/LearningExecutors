@@ -98,7 +98,7 @@ namespace std::execution
             execution::static_thread_pool& pool_;
             R r_;
 
-            void start() &&
+            void start() && noexcept
             {
                 pool_.enqueue([r = move(r_)]() mutable noexcept
                 {

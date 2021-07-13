@@ -11,18 +11,18 @@ namespace std::execution
             : r_(move(r))
         {}
 
-        void set_value() noexcept
+        void set_value() && noexcept
         {
             execution::set_done(move(r_));
         }
 
         template <typename E>
-        void set_error(E&& e) noexcept
+        void set_error(E&& e) && noexcept
         {
             execution::set_error(move(r_), forward<E>(e));
         }
 
-        void set_done() noexcept
+        void set_done() && noexcept
         {
             execution::set_done(move(r_));
         }
