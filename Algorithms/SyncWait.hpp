@@ -4,260 +4,267 @@ namespace std::execution
 {
     namespace sync_wait_n
     {
-        struct shared_state_base
+        class _sync_primitive
         {
+        public:
+            void notify() noexcept
+            {
+                unique_lock<mutex> lock{ mutex_ };
+                stop_ = true;
+                cond_var_.notify_one();
+            }
+
+            void wait()
+            {
+                unique_lock<mutex> lock{ mutex_ };
+                cond_var_.wait(lock, [this]{ return stop_; });
+            }
+
+        private:
+            bool                stop_{ false };
             condition_variable  cond_var_;
             mutex               mutex_;
         };
 
-        enum class status_t
+        struct _promise_base
         {
-            none,
-            done,
+            enum class state_t { incomplete, done, value, error, };
+            state_t state_{ state_t::incomplete };
+
+            template <typename ValueTypes, typename ErrorTypes>
+            void check_state(variant<ValueTypes, ErrorTypes> const& v) const noexcept
+            {
+                switch(state_)
+                {
+                    case state_t::value:
+                        break;
+                    case state_t::error:
+                    {
+                        if constexpr(same_as<ErrorTypes, exception_ptr>)
+                        {
+                            rethrow_exception(get<1>(v.value_));
+                        }
+                        else
+                        {
+                            throw get<1>(v.value_);
+                        }
+                    }
+                    default:
+                        terminate();
+                }
+            }
         };
 
-        template <typename T, typename E = exception_ptr>
-        class shared_state : protected shared_state_base
+        template <typename Values, typename Errors>
+        struct _promise : _promise_base
         {
-        private:
-            variant<status_t, T, E> values_;
-
-        public:
-            static consteval size_t size() noexcept
-            {
-                using tuple_size_type = tuple_size<T>;
-                if constexpr(is_complete_type_v<tuple_size_type>)
-                {
-                    tuple_size_type::value;
-                }
-                return size_t{ 1 };
-            }
-
-            shared_state() : values_(status_t::none) {}
+            // export value types and error types
+            using value_types = get_value_types_t<Values>;
+            using error_types = get_error_types_t<Errors>;
+            using value_type = variant<value_types, error_types>;
 
             template <typename ... Args>
-            void set_value(Args&& ... args)
+            static consteval bool is_nothrow_values() noexcept
             {
-                unique_lock<mutex> lock{ mutex_ };
-                values_ = move(T( forward<Args>(args)... ));
-                cond_var_.notify_one();
+                return conjunction_v<
+                    is_nothrow_move_constructible<value_types>,
+                    is_nothrow_move_assignable<value_types>,
+                    is_nothrow_constructible<value_types, Args...>>;
             }
 
-            void set_error(E e)
+            static consteval bool is_nothrow_errors() noexcept
             {
-                unique_lock<mutex> lock{ mutex_ };
-                values_ = move(e);
-                cond_var_.notify_one();
+                return conjunction_v<is_nothrow_move_constructible<error_types>, is_nothrow_move_assignable<error_types>>;
             }
 
-            void set_done()
+            //static_assert(is_nothrow_errors());
+
+            value_types get_value() const
             {
-                unique_lock<mutex> lock{ mutex_ };
-                values_ = status_t::done;
-                cond_var_.notify_one();
+                return get<0>(value_);
             }
 
-            void wait()
+            template <typename ... Args>
+            void set_value(Args&& ... args) noexcept
             {
-                unique_lock<mutex> lock{ mutex_ };
-                cond_var_.wait(lock, [this]
+                if constexpr(is_nothrow_values<Args&&...>())
                 {
-                    auto const index = values_.index();
-                    return index != 0 || get<0>(values_) != status_t::none;
-                });
-            }
-
-            T& values()
-            {
-                auto const index = values_.index();
-                if(index == 1)
-                {
-                    return get<1>(values_);
-                }
-                else if(index == 2)
-                {
-                    if constexpr(same_as<E, exception_ptr>)
-                    {
-                        rethrow_exception(get<2>(values_));
-                    }
-                    else
-                    {
-                        throw get<2>(values_);
-                    }
+                    value_ = value_types{ forward<Args>(args)... };
+                    this->state_ = state_t::value;
                 }
                 else
                 {
-                    if (get<0>(values_) == status_t::done)
+                    try
                     {
-                        terminate();
+                        value_ = value_types{ forward<Args>(args)... };
+                        this->state_ = state_t::value;
                     }
-                    else
+                    catch(...)
                     {
-                        throw runtime_error{ "not init" };
-                    }
-                }
-            }
-        };
-
-        template <typename E>
-        class shared_state<void, E> : protected shared_state_base
-        {
-        private:
-            variant<status_t, int, E> values_;
-
-        public:
-            static consteval size_t size() noexcept { return 0; }
-
-            shared_state() : values_(status_t::none) {}
-
-            void set_value()
-            {
-                unique_lock<mutex> lock{ mutex_ };
-                values_ = 0;
-                cond_var_.notify_one();
-            }
-
-            void set_error(E e)
-            {
-                unique_lock<mutex> lock{ mutex_ };
-                values_ = move(e);
-                cond_var_.notify_one();
-            }
-
-            void set_done()
-            {
-                unique_lock<mutex> lock{ mutex_ };
-                values_ = status_t::done;
-                cond_var_.notify_one();
-            }
-
-            void wait()
-            {
-                unique_lock<mutex> lock{ mutex_ };
-                cond_var_.wait(lock, [this]{ return values_ != status_t::none; });
-
-                auto const index = values_.index();
-                if(index == 2)
-                {
-                    if constexpr(same_as<E, exception_ptr>)
-                    {
-                        rethrow_exception(get<2>(values_));
-                    }
-                    else
-                    {
-                        throw get<2>(values_);
-                    }
-                }
-                else if(index == 0)
-                {
-                    if(get<0>(values_) == status_t::done)
-                    {
-                        terminate();
-                    }
-                    else
-                    {
-                        throw runtime_error{ "not init" };
+                        set_error(current_exception());
                     }
                 }
             }
-        };
 
-        template <typename ValueType, typename E = exception_ptr>
-        class _receiver_type
-        {
-            using state_type = shared_state<ValueType>;
-
-        public:
-            static consteval size_t size() noexcept{ return state_type::size(); }
-
-            _receiver_type()
-                : state_(make_shared<shared_state<ValueType>>())
-            {}
-            ~_receiver_type() = default;
-
-            _receiver_type(_receiver_type const&) = default;
-            _receiver_type& operator= (_receiver_type const&) = default;
-            _receiver_type(_receiver_type&&) = default;
-            _receiver_type& operator= (_receiver_type&&) = default;
-
-            template <typename ... Args>
-            void set_value(Args&& ... args)
+            void set_error(error_types&& e) noexcept
             {
-                state_->set_value(forward<Args>(args)...);
-            }
-
-            void set_error(E&& e) noexcept
-            {
-                state_->set_error(forward<E>(e));
+                value_ = move(e);
+                this->state_ = state_t::error;
             }
 
             void set_done() noexcept
             {
-                state_->set_done();
+                this->state_ = state_t::done;
             }
 
-            auto get_shared_state() const
+            value_type value_;
+        };
+
+        template <typename Errors>
+        struct _promise<void, Errors> : _promise_base
+        {
+            using value_types = void;
+            using error_types = get_error_types_t<Errors>;
+            using value_type = variant<int, error_types>;
+
+            template <typename ... Args>
+            static consteval bool is_nothrow_values() noexcept { return true; }
+
+            static consteval bool is_nothrow_errors() noexcept
             {
-                return state_;
+                return conjunction_v<is_nothrow_move_constructible<error_types>, is_nothrow_move_assignable<error_types>>;
+            }
+
+            //static_assert(is_nothrow_errors());
+
+            void get_value() const
+            {
+                [[maybe_unused]]int value = get<0>(value_);
+                return;
+            }
+
+            void set_value(...) noexcept
+            {
+                value_ = 0;
+                this->state_ = state_t::value;
+            }
+
+            void set_error(error_types&& e) noexcept
+            {
+                value_ = move(e);
+                this->state_ = state_t::error;
+            }
+
+            void set_done() noexcept
+            {
+                this->state_ = state_t::done;
+            }
+
+            value_type value_;
+        };
+
+        template <typename ValueTypes, typename ErrorTypes>
+        class _receiver_type
+        {
+        public:
+            using promise_t = _promise<ValueTypes, ErrorTypes>;
+            using value_types = typename promise_t::value_types;
+            using error_types = typename promise_t::error_types;
+
+        public:
+            explicit _receiver_type(promise_t& promise, _sync_primitive& sync)
+                : promise_(promise)
+                , sync_(sync)
+            {}
+
+            template <typename ... Args>
+            void set_value(Args&& ... args) && noexcept(promise_t::template is_nothrow_values<Args&&...>())
+            {
+                promise_.set_value(forward<Args>(args)...);
+                sync_.notify();
+            }
+
+            void set_error(error_types&& e) && noexcept
+            {
+                promise_.set_error(move(e));
+                sync_.notify();
+            }
+
+            void set_done() && noexcept
+            {
+                promise_.set_done();
+                sync_.notify();
             }
 
         private:
-            shared_ptr<state_type> state_;
+            promise_t&          promise_;
+            _sync_primitive&    sync_;
         };
 
-        template <typename Tuple, typename E>
-        struct get_receiver_type;
-
-        template <typename Arg, typename E>
-        struct get_receiver_type<variant<tuple<Arg>>, E>
-        {
-            using type = _receiver_type<Arg, E>;
-        };
-
-        template <typename E>
-        struct get_receiver_type<variant<tuple<>>, E>
-        {
-            using type = _receiver_type<void, E>;
-        };
-
-        template <typename ... Args, typename E> requires((sizeof...(Args) > 1))
-        struct get_receiver_type<variant<tuple<Args...>>, E>
-        {
-            using type = _receiver_type<tuple<Args...>, E>;
-        };
-
-        template
-        <
-            template< template <typename ...> class Variant, template <typename ...> class Tuple> class ValueTypes,
-            typename E = exception_ptr
-        >
-        using get_receiver_type_t = typename get_receiver_type<ValueTypes<variant, tuple>, E>::type;
-
-        template <sender S>
-        auto sync_wait(S&& s)
-        {
-            // get the type of recevier
-            using receiver_type = get_receiver_type_t<sender_traits<remove_cvref_t<S>>::template value_types>;
-
-            // construct a receiver
-            receiver_type receiver{};
-
-            // get the sync primitive in the receiver
-            auto shared_state = receiver.get_shared_state();
-
-            // start the async operation
-            execution::start(execution::connect(forward<S>(s), move(receiver)));
-
-            // wait on this thread
-            shared_state->wait();
-
-            // return value
-            if constexpr(receiver_type::size() != 0)
+        template <typename S>
+        concept has_sync_wait_impl =
+            requires(S&& s)
             {
-                return shared_state->values();
+                forward<S>(s).sync_wait();
+            };
+
+        template <typename S>
+        concept customise_point =
+            requires(S&& s)
+            {
+                sync_wait(forward<S>(s));
+            };
+
+        struct func_type
+        {
+            // default impl
+            template <typename S> requires(sender<S>)
+            auto operator() (S&& s) const
+            {
+                // get the type of recevier
+                using receiver_type = _receiver_type
+                <
+                typename sender_traits<remove_cvref_t<S>>::template value_types<variant, tuple>,
+                typename sender_traits<remove_cvref_t<S>>::template error_types<variant>
+                                                         >;
+
+                // get the type of promise
+                using promise_t = typename receiver_type::promise_t;
+
+                // construct a promise
+                promise_t promise{};
+
+                // construct a synchronise primitive object
+                _sync_primitive sync;
+
+                // construct a receiver
+                receiver_type receiver{ promise, sync };
+
+                // start the async operation
+                execution::start(execution::connect(forward<S>(s), move(receiver)));
+
+                // wait on this thread
+                sync.wait();
+
+                // return value
+                return promise.get_value();
             }
-        }
+
+            // customise point implementation
+            template <typename S> requires(sender<S> && customise_point<S>)
+            auto operator() (S&& s) const
+            {
+                return sync_wait(forward<S>(s));
+            }
+
+            // has sync_wait implementation
+            template <typename S> requires(sender<S> && has_sync_wait_impl<S> && !customise_point<S>)
+            auto operator() (S&& s) const
+            {
+                return forward<S>(s).sync_wait();
+            }
+        };
     }
 
-    using sync_wait_n::sync_wait;
+    inline constexpr sync_wait_n::func_type sync_wait{};
 }

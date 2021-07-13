@@ -21,6 +21,7 @@ namespace std::execution
 // execution
 namespace std::execution
 {
+    // has value types
     template<template
     <
         template <typename...> class Tuple,
@@ -28,8 +29,61 @@ namespace std::execution
     > class>
     struct has_value_types;
 
+    // has error types
     template <template <template <typename...> class> class>
     struct has_error_types;
+
+    // get value types
+    template <typename ValueTypes>
+    struct get_value_types;
+
+    template
+    <
+        template <typename ...> class Variant,
+        template <typename ...> class Tuple,
+        typename Arg
+    >
+    struct get_value_types<Variant<Tuple<Arg>>> { using type = Arg; };
+
+    template
+    <
+        template <typename ...> class Variant,
+        template <typename ...> class Tuple
+    >
+    struct get_value_types<Variant<Tuple<>>> { using type = void; };
+
+    template
+    <
+        template <typename ...> class Variant,
+        template <typename ...> class Tuple,
+        typename ... Args
+    > requires((sizeof...(Args) > 1))
+    struct get_value_types<Variant<Tuple<Args...>>>
+    {
+        using type = Tuple<Args...>;
+    };
+
+    template <typename ValueTypes>
+    using get_value_types_t = typename get_value_types<ValueTypes>::type;
+    // end of get value types
+
+    // get error types
+    template <typename ErrorTypes>
+    struct get_error_types;
+
+    template
+    <
+        template <typename ...> class Variant,
+        typename Error
+    >
+    struct get_error_types<Variant<Error>>
+    {
+        using type = Error;
+    };
+
+    template <typename ErrorTypes>
+    using get_error_types_t = typename get_error_types<ErrorTypes>::type;
+    // end of get error types
 
     template <typename S>
     struct sender_traits;

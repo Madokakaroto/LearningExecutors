@@ -71,20 +71,21 @@ int main(void)
     auto just_sender = std::execution::just(1, 2, 3);
     auto f = [](int i, int j, int k) noexcept
     {
-        printf("i=%d, j=%d, k=%d", i, j, k);
+        printf("i=%d, j=%d, k=%d\n", i, j, k);
     };
 
     std::execution::start(std::execution::connect(std::execution::transform(just_sender, f), sink));
 
 
-    std::execution::static_thread_pool pool{ 4 };
+    /*std::execution::static_thread_pool pool{ 4 };
     std::execution::on(std::execution::just(2), pool.get_scheduler());
     std::execution::just_on(pool.get_scheduler(), 2);
     std::execution::just(2)
         | std::execution::on(pool.get_scheduler())
-        | std::execution::transform([](int i){ return static_cast<double>(i) * 2.0; });
+        | std::execution::transform([](int i){ return static_cast<double>(i) * 2.0; });*/
 
-    std::execution::sync_wait(std::execution::just(2, 3));
+    auto [a, b] = std::execution::sync_wait(std::execution::just(2, 3));
+    printf("a=%d, b=%d\n", a, b);
 
     return 1;
 }
