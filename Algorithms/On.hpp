@@ -16,26 +16,21 @@ namespace std::execution
                 , r_(move(r))
             {}
 
-            _receiver_type(S s, R const& r)
-                : s_(move(s))
-                , r_(r)
-            {}
-
             template <typename ... Vs>
-            void set_value(Vs&& ... vs) &&
+            void set_value(Vs&& ... vs) && noexcept
             {
                 value_receiver r{ move(r_), forward<Vs>(vs)... };
                 execution::submit(move(s_), move(r));
             }
 
             template <typename E>
-            void set_error(E&& e) &&
+            void set_error(E&& e) && noexcept
             {
                 error_receiver r{ move(r_), forward<E>(e) };
                 execution::submit(move(s_), move(r));
             }
 
-            void set_done() &&
+            void set_done() && noexcept
             {
                 done_receiver r{ move(r_) };
                 execution::submit(move(s_), move(r));
@@ -43,12 +38,29 @@ namespace std::execution
         };
 
         // S is the original sender
-        // Sch is the scheduler where values of the sender are proprgated on
+        // Sch is the scheduler where values of the sender are propagated
         template <sender S, scheduler Sch>
-        struct _sender_type : sender_base
+        struct _sender_type
         {
             S s_;
             schedule_result_t<Sch> ssch_;
+
+            template
+            <
+                template <typename ...> class Variant,
+                template <typename ...> class Tuple
+            >
+            using value_types = typename sender_traits<S>::template value_types<Variant, Tuple>;
+
+            template
+            <
+                template <typename ...> class Variant
+            >
+            using error_types = typename sender_traits<S>::template error_types<Variant>;
+
+            static constexpr bool sends_done =
+                sender_traits<S>::sends_done ||
+                sender_traits<schedule_result_t<Sch>>::sends_done;
 
             _sender_type(S s, Sch sch)
                 : s_(move(s))
