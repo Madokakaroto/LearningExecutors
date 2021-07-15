@@ -134,9 +134,9 @@ int main(void)
 
 
     static_thread_pool pool{ 4 };
-    auto r = sync_wait(just(2, 3) | on(pool.get_scheduler()) | transform([](int i, int j){ return (i + j) * 0.2; }));
+    //auto r = sync_wait(just(2, 3) | on(pool.get_scheduler()) | transform([](int i, int j){ return (i + j) * 0.2; }));
 
-    //auto r = sync_wait(just(2, 3) | transform([](int i, int j){ return i + j; }));
+    auto r = sync_wait(just(2, 3) | transform([](int i, int j){ return i + j; }));
 
     //std::cout << a << b << std::endl;
 
