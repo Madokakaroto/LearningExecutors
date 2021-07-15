@@ -21,22 +21,7 @@ namespace std::execution
 // execution
 namespace std::execution
 {
-    // has value types
-    template<template
-    <
-        template <typename...> class Tuple,
-        template <typename ...> class Variant
-    > class>
-    struct has_value_types;
-
-    // has error types
-    template <template <template <typename...> class> class>
-    struct has_error_types;
-
-    // get value types
-    template <typename ValueTypes>
-    struct get_value_types;
-
+    // get value types impl
     template
     <
         template <typename ...> class Variant,
@@ -67,10 +52,7 @@ namespace std::execution
     using get_value_types_t = typename get_value_types<ValueTypes>::type;
     // end of get value types
 
-    // get error types
-    template <typename ErrorTypes>
-    struct get_error_types;
-
+    // get error types impl
     template
     <
         template <typename ...> class Variant,
@@ -84,9 +66,6 @@ namespace std::execution
     template <typename ErrorTypes>
     using get_error_types_t = typename get_error_types<ErrorTypes>::type;
     // end of get error types
-
-    template <typename S>
-    struct sender_traits;
 
     template <typename T, typename Prop, typename = void>
     struct is_applicable_property : false_type {};
@@ -105,4 +84,31 @@ namespace std::execution
     >> : std::true_type {};
     template <typename Prop>
     inline constexpr bool is_requirable_concept_v = is_requirable_concept<Prop>::value;
+
+    template <typename S, typename R>
+    struct is_connect_invocable : false_type {};
+    template <typename S, typename R>
+    inline constexpr bool is_connect_invocable_v = is_connect_invocable<S, R>::value;
+
+    template <typename E, typename F>
+    struct is_execute_invocable : false_type {};
+    template <typename E, typename F>
+    inline constexpr bool is_execute_invocable_v = is_execute_invocable<E, F>::value;
+
+    template <typename S, typename = void>
+    struct is_invalid_sender_traits : false_type{};
+    template <typename S>
+    struct is_invalid_sender_traits<S, typename sender_traits<S>::__unspecialized> : true_type {};
+    template <typename S>
+    inline constexpr bool is_invalid_sender_traits_v = is_invalid_sender_traits<S>::value;
+
+    template <typename O>
+    struct is_start_invocable : false_type{};
+    template <typename O>
+    inline constexpr bool is_start_invocable_v = is_start_invocable<O>::value;
+
+    template <typename E>
+    struct is_schedule_invocable : false_type{};
+    template <typename E>
+    inline constexpr bool is_schedule_invocable_v = is_schedule_invocable<E>::value;
 }

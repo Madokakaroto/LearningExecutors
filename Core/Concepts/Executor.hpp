@@ -10,10 +10,7 @@ namespace std::execution
         copy_constructible<E> &&
         is_nothrow_copy_constructible_v<E> &&
         equality_comparable<E> &&
-        requires(E const& e, F&& f)
-        {
-            execution::execute(e, forward<F>(f));
-        };
+        is_execute_invocable_v<E, F>;
 
     template <typename E>
     concept executor = executor_of_impl<E, invocable_archetype>;

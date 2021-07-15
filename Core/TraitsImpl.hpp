@@ -2,12 +2,7 @@
 
 namespace std::execution
 {
-    template <typename S>
-    struct sender_traits
-    {
-        using __unspecialized = void;
-    };
-
+    // impl of sender traits
     template <has_sender_types S>
     struct sender_traits<S>
     {
@@ -43,4 +38,33 @@ namespace std::execution
 
     template <is_sender_base S> requires (!has_sender_types<S>)
     struct sender_traits<S> {};
+    // end of impl of sender traits
+
+    template <typename S, typename R>
+        requires(requires(S&& s, R&& r)
+        {
+            { execution::connect(forward<S>(s), forward<R>(r)) } -> operation_state;
+        })
+    struct is_connect_invocable<S, R> : true_type {};
+
+    template <typename E, typename F>
+        requires(requires(E&& e, F&& f)
+        {
+            execution::execute(forward<E>(e), forward<F>(f));
+        })
+    struct is_execute_invocable<E, F> : true_type{};
+
+    template <typename O>
+        requires(requires(O&& o)
+        {
+            execution::start(forward<O>(o));
+        })
+    struct is_start_invocable<O> : true_type {};
+
+    template <typename E>
+        requires(requires(E&& e)
+        {
+            execution::schedule(forward<E>(e));
+        })
+    struct is_schedule_invocable<E> : true_type {};
 }
