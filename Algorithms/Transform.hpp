@@ -122,7 +122,7 @@ namespace std::execution
             }
 
             template <typename S, typename F> requires customise_point<S, F>
-            decltype(auto) operator()(S&& s, F&& f) const noexcept(noexcept(transform(delval<S>(), declval<F>())))
+            decltype(auto) operator()(S&& s, F&& f) const noexcept(noexcept(transform(declval<S>(), declval<F>())))
             {
                 return transform(forward<S>(s), forward<F>(f));
             }

@@ -64,7 +64,8 @@ add_executable(Executors
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+message(${CMAKE_CXX_COMPILER_ID})
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_compile_definitions(USE_STD_CONCEPTS_LIB)
 endif()
 
