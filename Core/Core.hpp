@@ -2,33 +2,37 @@
 
 #include "Core/Forward.hpp"
 #include "Core/Traits.hpp"
+
+// basic
 #include "Core/Concepts/Std.hpp"
 #include "Core/Concepts/Basic.hpp"
-#include "Core/Concepts/Properties.hpp"
+
+// fundamental CPOs
 #include "Core/CPOs/Properties.hpp"
 #include "Core/CPOs/SetValue.hpp"
 #include "Core/CPOs/SetError.hpp"
 #include "Core/CPOs/SetDone.hpp"
-#include "Core/CPOs/Start.hpp"
+
+// CPOs concepts
 #include "Core/Concepts/Receiver.hpp"
 #include "Core/Concepts/Sender.hpp"
 #include "Core/Concepts/OperationState.hpp"
-// sender to concepts is defined after the definition of execution::connect cpo
-#include "Core/CPOs/Connect.hpp"
-#include "Core/Concepts/SenderTo.hpp"
-
-#include "Core/CPOs/Submit.hpp"
-// executor of impl and executor concepts are defined after the definition of execution::execute cpo
-#include "Core/CPOs/Execute.hpp"
-#include "Core/Concepts/Executor.hpp"
-#include "Core/Properties.hpp"
-// impl of forward traits
-#include "Core/TraitsImpl.hpp"
-
-#include "Core/CPOs/BulkExecute.hpp"
-// scheduler concept is defined after the definition of execution::shcdule cpo
-#include "Core/CPOs/Schedule.hpp"
 #include "Core/Concepts/Scheduler.hpp"
+#include "Core/Concepts/Executor.hpp"
+
+// properties
+#include "Core/Properties.hpp"
+
+// core CPOs
+#include "Core/CPOs/Start.hpp"
+#include "Core/CPOs/Connect.hpp"
+#include "Core/CPOs/Submit.hpp"
+#include "Core/CPOs/Execute.hpp"
+#include "Core/CPOs/BulkExecute.hpp"
+#include "Core/CPOs/Schedule.hpp"
+
+// traits impl
+#include "Core/TraitsImpl.hpp"
 
 // adaptors
 #include "Core/Adaptors/AsErrorReceiver.hpp"

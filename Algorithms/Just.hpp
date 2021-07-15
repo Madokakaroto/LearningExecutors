@@ -35,7 +35,7 @@ namespace std::execution
             // end of sender traits
 
             // values member
-            std::tuple<Args...> tuple_;
+            tuple<Args...> tuple_;
 
             explicit(sizeof...(Args) == 1) constexpr _sender_type(Args ... args)
                 : tuple_(move(args)...) { }
@@ -44,7 +44,7 @@ namespace std::execution
             struct _op
             {
                 R r_;
-                std::tuple<Args...> tuple_;
+                tuple<Args...> tuple_;
                 void start() && noexcept
                 {
                     if constexpr(is_nothrow_invocable_v<decltype(execution::set_value), R&&, Args...>)
