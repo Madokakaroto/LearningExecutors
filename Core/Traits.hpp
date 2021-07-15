@@ -98,7 +98,7 @@ namespace std::execution
     template <typename S, typename = void>
     struct is_invalid_sender_traits : false_type{};
     template <typename S>
-    struct is_invalid_sender_traits<S, typename sender_traits<S>::__unspecialized> : true_type {};
+    struct is_invalid_sender_traits<S, enable_if_t<is_base_of_v<invalid_sender_traits, S>>> : true_type {};
     template <typename S>
     inline constexpr bool is_invalid_sender_traits_v = is_invalid_sender_traits<S>::value;
 
