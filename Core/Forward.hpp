@@ -47,14 +47,11 @@ namespace std::execution
     template <typename ErrorTypes>
     struct get_error_types;
 
-    struct invalid_sender_traits
-    {
-        using __unspecialized = void;
-    };
+    struct invalid_sender_traits {};
 
     template <typename S>
     struct sender_traits : invalid_sender_traits
     {
-        using __unspecialized = invalid_sender_traits::__unspecialized;
+        using __unspecialized = void;
     };
 }

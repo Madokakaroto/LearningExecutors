@@ -2,7 +2,7 @@
 
 namespace std::execution
 {
-    template<typename S>
+    template <typename S>
     concept has_sender_types = requires
     {
         typename has_value_types<S::template value_types>;

@@ -3,7 +3,7 @@
 namespace std::execution
 {
     // impl of sender traits
-    template <has_sender_types S>
+    template <typename S> requires(has_sender_types<S>)
     struct sender_traits<S>
     {
         template
@@ -19,8 +19,7 @@ namespace std::execution
         static constexpr bool sends_done = S::sends_done;
     };
 
-    template <typename S> requires(!has_sender_types<S> && executor_of_impl<S, as_invocable<void_receiver, S>>)
-    //template <typename S> requires (!has_sender_types<S> && executor_of_impl<S, invocable_archetype>)
+    template <typename S> requires(!has_sender_types<S> && executor<S>)
     struct sender_traits<S>
     {
         template
@@ -36,7 +35,7 @@ namespace std::execution
         static constexpr bool sends_done = true;
     };
 
-    template <is_sender_base S> requires (!has_sender_types<S>)
+    template <typename S> requires (!has_sender_types<S> && is_sender_base<S>)
     struct sender_traits<S> {};
     // end of impl of sender traits
 
