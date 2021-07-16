@@ -35,9 +35,10 @@
 #include "Core/TraitsImpl.hpp"
 
 // adaptors
-#include "Core/Adaptors/AsErrorReceiver.hpp"
-#include "Core/Adaptors/AsDoneReceiver.hpp"
-#include "Core/Adaptors/AsValueReceiver.hpp"
+#include "Core/Common/ErrorReceiver.hpp"
+#include "Core/Common/DoneReceiver.hpp"
+#include "Core/Common/ValueReceiver.hpp"
+#include "Core/Common/PropagateReceiver.hpp"
 
 // standard extensions for the above CPOs
 #include "Core/CPOs/StandardExt.hpp"

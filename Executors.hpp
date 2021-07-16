@@ -15,11 +15,12 @@
 // core module
 #include "Core/Core.hpp"
 
-// algorithms
-#include "Algorithms/Algorithms.hpp"
-
 // queues
 #include "Memory/Memory.hpp"
 
 // contexts
 #include "Contexts/StaticThreadPool.hpp"
+#include "Contexts/ImmediateContext.hpp"
+
+// algorithms
+#include "Algorithms/Algorithms.hpp"

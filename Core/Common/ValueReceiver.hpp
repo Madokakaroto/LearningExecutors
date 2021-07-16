@@ -2,8 +2,8 @@
 
 namespace std::execution
 {
-    template <typename R, typename ... Vs> //requires receiver_of<R, Vs...>
-    struct value_receiver
+    template <typename R, typename ... Vs> requires receiver_of<R, Vs...>
+    struct _value_receiver
     {
         using tuple_value_t = tuple<remove_cvref_t<Vs>...>;
 
@@ -11,12 +11,12 @@ namespace std::execution
         tuple_value_t value_;
 
         template <typename ... Args> requires(is_nothrow_constructible_v<tuple_value_t, Args&&...>)
-        value_receiver(R&& r, Args&& ... args)
+        _value_receiver(R&& r, Args&& ... args)
             : r_(move(r))
             , value_{ forward<Args>(args)... }
         {}
 
-        void set_value() && //noexcept(is_nothrow_invocable_v<decltype(execution::set_value), R&&, Vs&&...>)
+        void set_value() && noexcept
         {
             apply([this](Vs&& ... vs) mutable noexcept
             {

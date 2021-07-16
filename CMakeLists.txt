@@ -11,9 +11,19 @@ set(EXECUTORS_CORE
         Core/Properties.hpp
         Core/Traits.hpp
         Core/TraitsImpl.hpp
-        Core/Adaptors/AsDoneReceiver.hpp
-        Core/Adaptors/AsErrorReceiver.hpp
-        Core/Adaptors/AsValueReceiver.hpp
+        Core/Common/DoneReceiver.hpp
+        Core/Common/ErrorReceiver.hpp
+        Core/Common/ValueReceiver.hpp
+        Core/Common/PropagateReceiver.hpp
+        Core/Concepts/Basic.hpp
+        Core/Concepts/Executor.hpp
+        Core/Concepts/OperationState.hpp
+        Core/Concepts/Properties.hpp
+        Core/Concepts/Receiver.hpp
+        Core/Concepts/Scheduler.hpp
+        Core/Concepts/Sender.hpp
+        Core/Concepts/SenderTo.hpp
+        Core/Concepts/Std.hpp
         Core/CPOs/BulkExecute.hpp
         Core/CPOs/Connect.hpp
         Core/CPOs/Execute.hpp
@@ -25,15 +35,6 @@ set(EXECUTORS_CORE
         Core/CPOs/StandardExt.hpp
         Core/CPOs/Start.hpp
         Core/CPOs/Submit.hpp
-        Core/Concepts/Basic.hpp
-        Core/Concepts/Executor.hpp
-        Core/Concepts/OperationState.hpp
-        Core/Concepts/Properties.hpp
-        Core/Concepts/Receiver.hpp
-        Core/Concepts/Scheduler.hpp
-        Core/Concepts/Sender.hpp
-        Core/Concepts/SenderTo.hpp
-        Core/Concepts/Std.hpp
     )
 
 set(EXECUTORS_ALGORITHMS
@@ -53,6 +54,7 @@ set(EXECUTORS_MEMORY
 
 set(EXECUTORS_CONTEXTS
         Contexts/StaticThreadPool.hpp
+        Contexts/ImmediateContext.hpp
     )
 
 add_executable(Executors

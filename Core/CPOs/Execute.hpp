@@ -18,12 +18,6 @@ namespace std::execution
                 execute(forward<E>(e), forward<F>(f));
             };
 
-        template <typename F, typename ... Args>
-        concept lvalue_invocable =
-            invocable<F, Args...> &&
-            move_constructible<F> &&
-            copy_constructible<F>;
-
         struct func_type
         {
             template <typename E, typename F>

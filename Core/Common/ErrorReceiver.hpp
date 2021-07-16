@@ -3,12 +3,12 @@
 namespace std::execution
 {
     template <typename R, typename E>
-    struct error_receiver
+    struct _error_receiver
     {
         R r_;
         E e_;
 
-        error_receiver(R&& r, E&& e)
+        _error_receiver(R&& r, E&& e)
             : r_(move(r))
             , e_(move(e))
         {}

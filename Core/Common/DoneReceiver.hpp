@@ -3,11 +3,11 @@
 namespace std::execution
 {
     template <typename R>
-    struct done_receiver
+    struct _done_receiver
     {
         R r_;
 
-        explicit done_receiver(R&& r)
+        explicit _done_receiver(R&& r)
             : r_(move(r))
         {}
 

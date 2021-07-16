@@ -12,4 +12,10 @@ namespace std::execution
 
     template <typename S>
     concept is_sender_base = is_base_of_v<sender_base, S>;
+
+    template <typename F, typename ... Args>
+    concept lvalue_invocable =
+        invocable<F, Args...> &&
+        move_constructible<F> &&
+        copy_constructible<F>;
 }
