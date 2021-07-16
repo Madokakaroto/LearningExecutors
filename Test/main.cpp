@@ -1,4 +1,5 @@
 #include <iostream>
+#include <exception>
 #include "../Executors.hpp"
 
 struct test_sender_traits : std::execution::sender_base
@@ -106,6 +107,27 @@ struct sfinae_concept_type<T, std::enable_if<std::is_integral_v<T>>>
     using type = T;
 };
 
+void throw_function()
+{
+    throw 2;
+}
+
+void process_excetion(std::exception_ptr const& e)
+{
+    try
+    {
+        std::rethrow_exception(e);
+    }
+    catch(int i)
+    {
+        std::cout << "Error int:" << i << std::endl;
+    }
+    catch(std::exception const& e)
+    {
+        std::cout << e.what() << std::endl;
+    }
+}
+
 int main(void)
 {
     static_assert(is_something_concept<int>);
@@ -140,6 +162,15 @@ int main(void)
         transform([](int i, int j){ return (i + j) * 0.2; }) |
         let_value([](double r){ return r > 0.1; }));
 
+
+    try
+    {
+        throw_function();
+    }
+    catch(...)
+    {
+        process_excetion(std::current_exception());
+    }
 
     return 1;
 }

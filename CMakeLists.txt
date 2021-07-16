@@ -41,6 +41,8 @@ set(EXECUTORS_ALGORITHMS
         Algorithms/Algorithms.hpp
         Algorithms/Just.hpp
         Algorithms/JustOn.hpp
+        Algorithms/LetError.hpp
+        Algorithms/LetValue.hpp
         Algorithms/On.hpp
         Algorithms/SyncWait.hpp
         Algorithms/Transform.hpp
