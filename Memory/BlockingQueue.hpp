@@ -42,16 +42,15 @@ namespace std::execution
             return true;
         }
 
-        task_t dequeue()
+        void dequeue(task_t& task)
         {
             lock_t lock{ mutex_ };
             while(tasks_.empty())
             {
                 cond_var_.wait(lock);
             }
-            task_t t = move(tasks_.front());
+            task = move(tasks_.front());
             tasks_.pop_front();
-            return t;
         }
 
         bool try_dequeue(task_t& t)
@@ -71,21 +70,25 @@ namespace std::execution
         }
 
         template <typename Pred>
-        task_t dequeue(Pred pred)
+        void dequeue(task_t& task, Pred pred)
         {
             lock_t lock{ mutex_ };
             while(tasks_.empty())
             {
                 if(!pred())
                 {
-                    return task_t{};
+                    return;
                 }
                 cond_var_.wait(lock);
             }
 
-            task_t t = move(tasks_.front());
+            task = move(tasks_.front());
             tasks_.pop_front();
-            return t;
+        }
+
+        void notify()
+        {
+            cond_var_.notify_all();
         }
 
         mutex              mutex_;

@@ -170,6 +170,7 @@ namespace std::execution
     inline void static_thread_pool::stop()
     {
         running_.store(false);
+        queue_.notify();
     }
 
     inline void static_thread_pool::join()
@@ -206,7 +207,12 @@ namespace std::execution
     {
         while(running_.load())
         {
-            task_t task = queue_.dequeue([this]{ return running_.load(); });
+            task_t task{};
+            queue_.dequeue(task, [this]{ return running_.load(); });
+            if(!running_)
+            {
+                return;
+            }
             if(task)
             {
                 task();
