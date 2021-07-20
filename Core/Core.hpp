@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Core/Forward.hpp"
-#include "Core/Traits.hpp"
+#include "Core/Traits/Traits.hpp"
+#include "Core/Traits/CallableTraits.hpp"
 
 // basic
 #include "Core/Concepts/Std.hpp"
@@ -32,13 +33,13 @@
 #include "Core/CPOs/Schedule.hpp"
 
 // traits impl
-#include "Core/TraitsImpl.hpp"
+#include "Core/Traits/TraitsImpl.hpp"
 
 // adaptors
 #include "Core/Common/ErrorReceiver.hpp"
 #include "Core/Common/DoneReceiver.hpp"
 #include "Core/Common/ValueReceiver.hpp"
-#include "Core/Common/PropagateReceiver.hpp"
+#include "Core/Common/Propagate.hpp"
 
 // standard extensions for the above CPOs
 #include "Core/CPOs/StandardExt.hpp"

@@ -16,6 +16,13 @@ namespace std::execution
     struct is_complete_type<T, std::void_t<decltype(sizeof(T))>> : std::true_type{};
     template <typename T>
     inline constexpr bool is_complete_type_v = is_complete_type<T>::value;
+
+    template <typename T, typename = void>
+    struct is_functor : false_type {};
+    template <typename T>
+    struct is_functor<T, void_t<decltype(&T::operator())>> : true_type {};
+    template <typename T>
+    inline constexpr bool is_functor_v = is_functor<T>::value;
 }
 
 // execution

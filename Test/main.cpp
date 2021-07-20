@@ -161,8 +161,7 @@ int main(void)
         on(pool.get_scheduler()) |
         transform([](int i, int j){ return (i + j) * 0.2; }) |
         let_value([](double r){ return r > 0.1; }));
-
-
+    
     try
     {
         throw_function();

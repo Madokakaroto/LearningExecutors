@@ -9,12 +9,10 @@ set(EXECUTORS_CORE
         Core/Core.hpp
         Core/Forward.hpp
         Core/Properties.hpp
-        Core/Traits.hpp
-        Core/TraitsImpl.hpp
         Core/Common/DoneReceiver.hpp
         Core/Common/ErrorReceiver.hpp
         Core/Common/ValueReceiver.hpp
-        Core/Common/PropagateReceiver.hpp
+        Core/Common/Propagate.hpp
         Core/Concepts/Basic.hpp
         Core/Concepts/Executor.hpp
         Core/Concepts/OperationState.hpp
@@ -35,6 +33,9 @@ set(EXECUTORS_CORE
         Core/CPOs/StandardExt.hpp
         Core/CPOs/Start.hpp
         Core/CPOs/Submit.hpp
+        Core/Traits/CallableTraits.hpp
+        Core/Traits/Traits.hpp
+        Core/Traits/TraitsImpl.hpp
     )
 
 set(EXECUTORS_ALGORITHMS
