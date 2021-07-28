@@ -154,14 +154,17 @@ int main(void)
 
     std::execution::start(std::execution::connect(std::execution::transform(just_sender, f), sink));
 
-
     static_thread_pool pool{ 4 };
     auto r = sync_wait(
         just(2, 3) |
         on(pool.get_scheduler()) |
         transform([](int i, int j){ return (i + j) * 0.2; }) |
         let_value([](double r){ return r > 0.1; }));
-    
+
+    start(connect(just(2) |
+        transform([](int i) { throw 2.0; }) |
+        let_error([](double err){ printf("catch double error value: %f.\n", err); }), sink));
+
     try
     {
         throw_function();

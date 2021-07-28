@@ -13,14 +13,7 @@ namespace std::execution
             template <typename ... Args> requires receiver_of<R, Args...>
             void set_value(Args&& ... args) && noexcept
             {
-                try
-                {
-                    execution::set_value(move(r_), forward<Args>(args)...);
-                }
-                catch(...)
-                {
-                    execution::set_error(move(r_), current_exception());
-                }
+                execution::set_value(move(r_), forward<Args>(args)...);
             }
 
             template <typename E>
@@ -49,6 +42,12 @@ namespace std::execution
                 }
             }
 
+            void set_done() && noexcept
+            {
+                execution::set_done(move(r_));
+            }
+
+        private:
             template <typename Ret, typename E>
             void propagate(E&& e)
             {
@@ -74,7 +73,7 @@ namespace std::execution
                 }
                 catch(Error const& err)
                 {
-                    this->set_error(err);
+                    move(*this).set_error(err);
                 }
             }
         };
@@ -82,6 +81,24 @@ namespace std::execution
         template <typename S, typename F>
         struct _sender_type
         {
+            // value types for typed sender
+            template
+            <
+                template <typename ...> class Variant,
+                template <typename ...> class Tuple
+            >
+            using value_types = Variant<Tuple<typename callable_traits<F>::result_type>>;
+
+            // error types for typed sender
+            // TODO ... a better error types
+            template
+            <
+                template <typename ...> class Variant
+            >
+            using error_types = typename sender_traits<S>::template error_types<Variant>;
+
+            static constexpr bool sends_done = sender_traits<S>::sends_done;
+
             S s_;
             F f_;
 
@@ -95,8 +112,54 @@ namespace std::execution
             auto connect(R&& r) && noexcept -> connect_result_t<S, _receiver_type<remove_cvref_t<R>, F>>
             {
                 using receiver_type = _receiver_type<remove_cvref_t<R>, F>;
-                return execution::connect(move(*this), receiver_type{ forward<R>(r), move(f_) });
+                return execution::connect(move(s_), receiver_type{ forward<R>(r), move(f_) });
+            }
+        };
+
+        template <typename S, typename F>
+            concept has_let_error_impl =
+            requires(S&& s, F&& f)
+            {
+                forward<S>(s).let_error(forward<F>(f));
+            };
+
+        template <typename S, typename F>
+            concept customise_point =
+            requires(S&& s, F&& f)
+            {
+                let_error(forward<S>(s), forward<F>(f));
+            };
+
+        struct func_type
+        {
+            template <sender S, typename F> requires(customise_point<S, F>)
+            decltype(auto) operator() (S&& s, F&& f) const
+                noexcept(noexcept(let_error(declval<S>(), declval<F>())))
+            {
+                return let_error(forward<S>(s), forward<F>(f));
+            }
+
+            template <sender S, typename F>
+                requires(!customise_point<S, F> && has_let_error_impl<S, F>)
+            decltype(auto) operator() (S&& s, F&& f) const
+                noexcept(noexcept(declval<S>().let_error(declval<F>())))
+            {
+                return forward<S>(s).let_error(forward<F>(f));
+            }
+
+            template <sender S, typename F>
+            decltype(auto) operator() (S&& s, F&& f) const noexcept
+            {
+                return _sender_type{ forward<S>(s), forward<F>(f) };
+            }
+
+            template <typename F>
+            auto operator() (F&& f) const noexcept
+            {
+                return _pipe_operand_type{ *this, forward<F>(f) };
             }
         };
     }
+
+    inline constexpr let_error_n::func_type let_error{};
 }

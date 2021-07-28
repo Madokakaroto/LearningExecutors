@@ -2,7 +2,7 @@
 
 namespace std::execution
 {
-    template <typename R, typename ... Vs> requires receiver_of<R, Vs...>
+    template <typename R, typename ... Vs> requires(receiver_of<R, Vs...>)
     struct _value_receiver
     {
         using tuple_value_t = tuple<remove_cvref_t<Vs>...>;
