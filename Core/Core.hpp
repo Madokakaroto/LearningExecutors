@@ -40,6 +40,7 @@
 #include "Core/Common/DoneReceiver.hpp"
 #include "Core/Common/ValueReceiver.hpp"
 #include "Core/Common/Propagate.hpp"
+#include "Core/Common/Promise.hpp"
 
 // standard extensions for the above CPOs
 #include "Core/CPOs/StandardExt.hpp"

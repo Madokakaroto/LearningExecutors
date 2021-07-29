@@ -154,6 +154,7 @@ int main(void)
 
     std::execution::start(std::execution::connect(std::execution::transform(just_sender, f), sink));
 
+
     static_thread_pool pool{ 4 };
     auto r = sync_wait(
         just(2, 3) |

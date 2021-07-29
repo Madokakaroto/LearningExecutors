@@ -11,6 +11,7 @@ set(EXECUTORS_CORE
         Core/Properties.hpp
         Core/Common/DoneReceiver.hpp
         Core/Common/ErrorReceiver.hpp
+        Core/Common/Promise.hpp
         Core/Common/ValueReceiver.hpp
         Core/Common/Propagate.hpp
         Core/Concepts/Basic.hpp
@@ -40,14 +41,16 @@ set(EXECUTORS_CORE
 
 set(EXECUTORS_ALGORITHMS
         Algorithms/Algorithms.hpp
+        Algorithms/EnsureStarted.hpp
         Algorithms/Just.hpp
         Algorithms/JustOn.hpp
         Algorithms/LetError.hpp
         Algorithms/LetValue.hpp
         Algorithms/On.hpp
+        Algorithms/PipeOperator.hpp
         Algorithms/SyncWait.hpp
         Algorithms/Transform.hpp
-        Algorithms/PipeOperator.hpp
+        Algorithms/WhenAll.hpp
         )
 
 set(EXECUTORS_MEMORY

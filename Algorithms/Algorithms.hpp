@@ -8,3 +8,5 @@
 #include "Algorithms/LetValue.hpp"
 #include "Algorithms/LetError.hpp"
 #include "Algorithms/SyncWait.hpp"
+#include "Algorithms/EnsureStarted.hpp"
+#include "Algorithms/WhenAll.hpp"
