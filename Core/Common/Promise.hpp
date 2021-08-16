@@ -40,11 +40,11 @@ namespace std::execution
                 {
                     if constexpr(same_as<ErrorTypes, exception_ptr>)
                     {
-                        rethrow_exception(get<1>(v.value_));
+                        rethrow_exception(get<1>(v));
                     }
                     else
                     {
-                        throw get<1>(v.value_);
+                        throw get<1>(v);
                     }
                 }
                 default:
@@ -79,6 +79,7 @@ namespace std::execution
 
         value_types get_value() const
         {
+            this->check_state(value_);
             return get<0>(value_);
         }
 
@@ -137,7 +138,7 @@ namespace std::execution
 
         void get_value() const
         {
-            [[maybe_unused]]int value = get<0>(value_);
+            this->check_state(value_);
             return;
         }
 

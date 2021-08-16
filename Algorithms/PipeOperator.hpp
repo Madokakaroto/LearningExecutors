@@ -29,4 +29,16 @@ namespace std::execution
     {
         return operand.cpo_(forward<S>(s), move(operand.operand_));
     }
+
+    template <sender S1, sender S2>
+    inline auto operator| (S1&& s1, S2&& s2) noexcept
+    {
+        return forward_as_tuple(forward<S1>(s1), forward<S2>(s2));
+    }
+
+    template <sender S2, sender ... Ss>
+    inline auto operator| (tuple<Ss&&...>&& ss, S2&& s2) noexcept
+    {
+        return tuple_cat(forward<tuple<Ss&&...>>(ss), forward_as_tuple(forward<S2>(s2)));
+    }
 }
